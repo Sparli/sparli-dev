@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Actions pinned to commit SHAs, not tags. A tag is mutable, and a moving major
+# tag is not guaranteed to exist at all -- that exact assumption broke every job
+# in a sibling repo, because a package published v9.0.0 without publishing a v9.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: install
+        run: npm ci
+
+      # Type-checks .astro files and the content schema together, so a case study
+      # missing a required field fails here rather than shipping half-rendered.
+      - name: check types and content schema
+        run: npx astro check
+
+      - name: build
+        run: npm run build
+
+      # The site publishes a performance claim. This is what makes the claim
+      # true tomorrow as well as today.
+      - name: performance budget
+        run: npm run budget
+
+  # Deploy runs only after the gates above pass, and only from main. Routing the
+  # deploy through Actions rather than Cloudflare's git integration is what makes
+  # "nothing ships that did not pass the budget" a checkable statement.
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: deploy to cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

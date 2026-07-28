@@ -1,0 +1,68 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Case studies get article semantics and a canonical of their own. */
+  article?: boolean;
+}
+
+const { title, description, article = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <!-- An emoji favicon as a data URI: no extra request, no binary in the repo. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>"
+    />
+  </head>
+  <body>
+    <!-- First tab stop. Costs four lines and is the difference between a site a
+         keyboard user can navigate and one they cannot. -->
+    <a class="skip" href="#main">Skip to content</a>
+
+    <div class="wrap">
+      <nav class="nav" aria-label="Primary">
+        <a class="home" href="/">Sparli Aman</a>
+        <ul>
+          <li><a href="/#shipped">Shipped</a></li>
+          <li><a href="/#writing">Writing</a></li>
+          <li><a href="/cv">CV</a></li>
+        </ul>
+      </nav>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer>
+        <span>Islamabad, UTC+5 &middot; full EU overlap, 4h US East</span>
+        <span>
+          <a href="mailto:sparli@croncore.com">sparli@croncore.com</a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://github.com/Sparli">GitHub</a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://linkedin.com/in/sparli-aman">LinkedIn</a>
+        </span>
+      </footer>
+    </div>
+  </body>
+</html>

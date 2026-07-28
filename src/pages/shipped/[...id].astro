@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("shipped", ({ data }) => !data.draft);
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+
+<Base title={`${d.title} · Sparli Aman`} description={d.outcome.replace(/<[^>]+>/g, "")} article>
+  <article class="study">
+    <p class="meta">{d.period} &middot; {d.context}</p>
+    <h1>{d.title}</h1>
+
+    <div class="tags" style="margin-bottom:24px">
+      {d.stack.map((s) => <span class="tag">{s}</span>)}
+    </div>
+
+    <Content />
+
+    <!-- Rendered from frontmatter rather than written in the body, so the schema
+         can require it. A claim with no stated way to check it does not build. -->
+    <div class="callout">
+      <p><b>How you could check this:</b> {d.evidence}</p>
+    </div>
+
+    <div class="cta">
+      <p>
+        <b>Recognise this problem?</b> If you are hiring for a forward-deployed or solutions role,
+        send me one you are dealing with now and I will tell you how I would approach it.
+      </p>
+      <p><a href="mailto:sparli@croncore.com">sparli@croncore.com</a></p>
+    </div>
+
+    <p style="margin-top:28px"><a href="/#shipped">&larr; everything else</a></p>
+  </article>
+</Base>

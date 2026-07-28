@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sparli-dev",
+  // Required field, but there is no Worker script here: this deploys static
+  // assets only. A Worker can be added later on the same origin if something
+  // genuinely needs a server, which nothing currently does.
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "./dist"
+  },
+  // Serve the apex and www from the same deployment. Cloudflare already holds
+  // the zone, so no DNS record needs creating by hand.
+  "routes": [
+    { "pattern": "sparli.dev", "custom_domain": true },
+    { "pattern": "www.sparli.dev", "custom_domain": true }
+  ]
+}

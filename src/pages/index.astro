@@ -1,0 +1,119 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+// Sorted by an explicit `order` rather than by date. The first entry is the one
+// I most want read, and that is an editorial decision, not a chronological one.
+const shipped = (await getCollection("shipped", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base
+  title="Sparli Aman · agentic AI systems in production"
+  description="I build agentic systems that act on other companies' production infrastructure: tool-using agents wired into CRMs, ticketing, repos and regulated comms, behind approval gates."
+>
+  <section class="hero">
+    <h1>I put agents into other people's production systems.</h1>
+
+    <p class="lede">
+      Tool-using agents wired into CRMs, ticketing, repos and regulated comms.
+      <b>Behind approval gates, so nothing irreversible happens without a human.</b>
+    </p>
+
+    <!-- Four numbers instead of a tagline. A tagline is a claim; a number is
+         checkable, and each of these traces to something on this page. -->
+    <div class="numbers">
+      <div>
+        <span class="n">7 yrs</span>
+        <span class="l">client-side delivery, scoping to production support</span>
+      </div>
+      <div>
+        <span class="n">4</span>
+        <span class="l">countries with systems live: US, CA, UK, Québec</span>
+      </div>
+      <div>
+        <span class="n">200+</span>
+        <span class="l">concurrent users stress-tested before release</span>
+      </div>
+      <div>
+        <span class="n">~80%</span>
+        <span class="l">fewer text-render errors, no model change, no added cost</span>
+      </div>
+    </div>
+
+    <p class="availability">
+      Islamabad, UTC+5. A full working-day overlap with the EU, four hours with US East.
+      Open to relocation and to customer travel. Available as an employee, or on contract through my
+      consultancy. <a href="mailto:sparli@croncore.com">sparli@croncore.com</a>
+    </p>
+  </section>
+
+  <h2 class="section" id="shipped">Shipped</h2>
+  <p class="sub">
+    Each one starts with what went wrong, because that is the part worth reading. Most of this is
+    client work under NDA, so the write-ups describe architecture and outcomes rather than showing
+    source.
+  </p>
+
+  <ul class="shipped">
+    {
+      shipped.map((entry) => (
+        <li>
+          <a class="card" href={`/shipped/${entry.id}/`}>
+            <h3>{entry.data.title}</h3>
+            <p class="outcome" set:html={entry.data.outcome} />
+            <div class="tags">
+              <span class="tag">{entry.data.period}</span>
+              <span class="tag">{entry.data.context}</span>
+              <span class="tag evidence">
+                {entry.data.layer === "architecture" ? "designed it" : "built and ran it"}
+              </span>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 class="section" id="how">How I work</h2>
+  <p class="sub">
+    Three positions I hold consistently enough that they show up in unrelated projects. Objections
+    to any of them are reasonable; these are the answers.
+  </p>
+
+  <div class="prose">
+    <p>
+      <b>Agents draft, humans release.</b> Every system I have built that can touch a customer holds
+      its side effects behind an explicit gate. In our delivery agent, writes land in a
+      <code>pending_actions</code> table and wait; there is no code path that emails a client
+      directly. I made the same call independently on a side project, where the terminal automated
+      state is <em>prepared</em> and <em>submitted</em> is a human attestation. The reason is not
+      caution. The failure is asymmetric and irreversible: you cannot recall a bad message to a
+      customer.
+    </p>
+    <p>
+      <b>Measure on the real path, not the benchmark.</b> I moved a production voice agent from one
+      model to another because response latency on live calls was too high, not because of a
+      leaderboard. The same instinct is why I stress-tested an inference platform to 200+ concurrent
+      users before release rather than after.
+    </p>
+    <p>
+      <b>Say what I did not do.</b> I build, integrate, deploy and operate these systems. I do not
+      train models, and where a project involved one I will tell you which part was mine. That
+      distinction costs me nothing and saves a conversation later.
+    </p>
+  </div>
+
+  <h2 class="section" id="writing">Writing</h2>
+  <p class="sub">In progress. First pieces land here as they are finished.</p>
+
+  <div class="cta">
+    <p>
+      <b>Hiring for a forward-deployed or solutions role?</b> The fastest way to judge whether I am
+      useful to you is to send me a real integration problem you are dealing with, and I will tell
+      you how I would approach it.
+    </p>
+    <p><a href="mailto:sparli@croncore.com">sparli@croncore.com</a></p>
+  </div>
+</Base>

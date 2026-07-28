@@ -1,0 +1,82 @@
+---
+title: "The agent hung up on people after four seconds"
+outcome: "Speech-to-text was mishearing the caller's <b>hello</b> as <b>no</b>, which tripped the end-call rule. Found it by listening to real calls, not by reading logs."
+period: "2025"
+context: "SEO SaaS, Canada"
+layer: delivery
+evidence: "The fix is three configuration rules in a version-controlled agent definition, reproducible from a setup script. The client can confirm the deployment and the call outcomes; I can walk through the config line by line."
+stack: ["Twilio", "ElevenLabs Conversational AI", "Claude Haiku", "custom SMS tool"]
+order: 1
+---
+
+The client wanted prospects called, pitched, and sent a document during the call. Not after.
+During, while the person is still on the line, because a link that arrives an hour later gets
+ignored.
+
+That part worked. What did not work was that the agent kept hanging up on people about four seconds
+in.
+
+## What made it hard to see
+
+An outbound calling agent has no staging environment worth the name. You can test against yourself
+all day and learn almost nothing, because you know to say "hello" clearly into a good microphone
+after the connect tone. A real prospect picks up in a car, says something that is not quite hello,
+and there is 300ms of carrier noise on the line first.
+
+The logs were not much help either. They showed a call connecting, a turn completing, and the agent
+invoking end-call. Every one of those was doing exactly what it was configured to do.
+
+## Finding it
+
+I listened to the recordings. That is the whole technique, and it is the thing I would do first
+again.
+
+On the failing calls, the transcript's first turn was the single word **no**. The prospect had said
+"hello". Speech-to-text, working on a noisy first packet, had returned "no", and the agent had a perfectly reasonable rule that a prospect saying no should end the call politely rather than
+keep talking.
+
+So nothing was broken. Two correct behaviours composed into a wrong one, which is the usual shape of
+this kind of bug and the reason reading either component in isolation tells you nothing.
+
+## The fix
+
+Three rules, and the ordering matters:
+
+| Rule | What it does |
+| --- | --- |
+| `skip_turn` on connect | Ignore audio arriving before the caller has actually started speaking, so carrier noise never becomes a turn |
+| Never end on the first turn | An end-call intent detected in the opening turn is treated as low-confidence and does not terminate |
+| Graceful close | The agent never terminates mid-sentence, or on a turn where it has just sent an SMS |
+
+The second one is the interesting one, and it is not a speech fix. It is an admission that the
+transcription will sometimes be wrong, and that the cost of the two errors is wildly asymmetric:
+hanging up on someone who wanted to talk is unrecoverable, while continuing for one more turn with
+someone who genuinely said no costs a few seconds and a slightly awkward goodbye.
+
+## What else came out of the same sessions
+
+Since I was already listening to real calls:
+
+- **Response latency was too high**, so I moved the conversational model from `gemini-2.0-flash` to
+  `claude-haiku-4-5`. That decision came from calls, not from a benchmark.
+- **Audio had intermittent glitches**, fixed by dropping TTS stability to 0.55.
+- The **mid-call SMS tool** needed its own handling in the close rules, because an agent that hangs
+  up immediately after firing an SMS reads as a bot even when everything technically succeeded.
+
+## Compliance was part of the build, not a wrapper
+
+The agent logs verbal consent before sending anything, and handles unsubscribe requests inline for
+CASL. On the parallel US deployment the same layer covers timezone-aware dialling windows, DNC
+scrubbing, mid-call opt-out detection, and carrier-spam mitigation so the client's numbers stay
+deliverable. I built these rather than buying them, because the rules differ per jurisdiction and
+the penalty for getting them wrong lands on the client's phone numbers.
+
+## What I would do differently
+
+I would have listened to recordings on day one instead of day three. I went to the logs first because
+that is the reflex, and the logs were structurally incapable of showing me this: every line in them
+was correct. The signal only existed in the audio.
+
+I would also now assert on the first-turn transcript in a test harness: feed recorded
+connect-noise through the pipeline and check that it produces no turn at all. That would have caught
+this before a real person heard it.

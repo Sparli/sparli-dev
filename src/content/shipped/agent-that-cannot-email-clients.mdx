@@ -1,0 +1,72 @@
+---
+title: "An agent with access to client inboxes that cannot send email"
+outcome: "Every side effect waits in a <b>pending_actions</b> table for a human. The send path does not exist, enforced by architecture rather than by a prompt."
+period: "2025"
+context: "Croncore internal, daily production use"
+layer: delivery
+evidence: "The constraint is checkable in the schema: writes are rows, not calls. I can walk through the tool definitions and show that the send path does not exist rather than being disabled."
+stack: ["Anthropic Messages API", "Claude Agent SDK", "Next.js", "Drizzle/Postgres", "ClickUp", "GitHub", "Gmail"]
+order: 2
+---
+
+Delivery work across several clients was bottlenecked on coordination rather than on engineering:
+triaging pull requests, moving tasks, writing the status update nobody wants to write on a Friday.
+
+All of that is automatable. The problem is that automating it means giving an agent write access to
+systems where a mistake reaches a customer, and "reaches a customer" is not a category of error you
+can iterate your way out of.
+
+## The constraint I started from
+
+I did not want a well-behaved agent. I wanted an agent that **could not** misbehave in the one
+direction that matters, regardless of what it decided to do.
+
+Prompting cannot give you that. A system prompt saying "always ask before sending" is a request, and
+the failure mode is silent: it works in testing, and then one day a slightly unusual context makes
+the model decide this particular case is obviously fine.
+
+So the send capability does not exist. The agent has no tool that emails a client and no tool that
+posts to ClickUp. What it has is a tool that writes a proposed action into a `pending_actions` row.
+A separate process, triggered by a human clicking approve, performs the action.
+
+The distinction matters because of what it does to the worst case. With a prompt-based guard, the
+worst case is an agent that sends something wrong. Here, the worst case is a badly-worded row in a
+table that a human reads and rejects.
+
+## What it actually does
+
+- Triages GitHub pull requests
+- Assigns and tracks developer tasks
+- Drafts client status reports and email
+
+All output, none of it delivered without a person releasing it.
+
+## Two things I would build the same way again
+
+**One tool surface, two runtimes.** The same tools run against the Messages API directly or through
+the Claude Agent SDK. That means the agent runs server-side on a schedule, or from my machine while
+I am working on it, without maintaining two implementations. When I want to debug a tool, I run it
+locally against the real definitions rather than against a mock.
+
+**Every run scoped to one `project_id`.** Context and memory are per-project, so nothing from one
+client can appear in another client's report. The isolation is the point, but it has a useful side
+effect: twenty projects means twenty small runs rather than one large one, which keeps each run's
+context small and its cost predictable.
+
+## The part that took longest
+
+Not the agent. The approval interface.
+
+A gate only works if the human actually reads what they are approving, and a queue that is tedious
+enough to skim is a rubber stamp with extra steps. Most of the iteration went into making a pending
+action legible in about three seconds: what will happen, to whom, and what it will say.
+
+I do not think I have finished this. It is good enough that I read every one, which is the bar, but
+I would want a lot more evidence before I trusted it at ten times the volume.
+
+## What I would do differently
+
+I would have written the reason codes into the reject path from the start. Right now a rejection
+tells me an action was wrong but not why, and those rejections are the single best signal I have
+about where the agent's judgment diverges from mine. Capturing a one-word reason at rejection time
+would have cost nothing and would by now be a labelled dataset of my own preferences.

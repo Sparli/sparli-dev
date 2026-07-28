@@ -1,0 +1,21 @@
+# Local tooling and planning. Reasoning that belongs in the repo goes in the
+# README or in a commit message, not in an assistant config file.
+CLAUDE.md
+.claude/
+PLAN.md
+
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+.DS_Store
+*.log
+.vscode/
+.idea/
