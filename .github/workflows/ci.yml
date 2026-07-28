@@ -52,9 +52,28 @@ jobs:
       - name: horizontal overflow at phone widths
         run: npm run viewport
 
+      # The exact bytes that just passed every gate above, handed to the deploy
+      # job. See the comment on that job for why this is not a rebuild.
+      - name: keep the checked build
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
   # Deploy runs only after the gates above pass, and only from main. Routing the
   # deploy through Actions rather than Cloudflare's git integration is what makes
   # "nothing ships that did not pass the budget" a checkable statement.
+  #
+  # It deploys the artifact the build job produced rather than building again.
+  # A rebuild would almost certainly be byte-identical, but "almost certainly" is
+  # the wrong standard for the one claim this pipeline exists to support: what
+  # passed the budget would be a different build of the same commit, not the
+  # bytes actually served. Downloading the artifact makes the claim literal.
+  #
+  # npm ci still runs, because wrangler comes from the lockfile. Letting npx
+  # fetch it at deploy time would unpin the only tool that touches production.
   deploy:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -68,7 +87,12 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run build
+
+      - name: fetch the checked build
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist/
 
       - name: deploy to cloudflare
         run: npx wrangler deploy
