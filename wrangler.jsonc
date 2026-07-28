@@ -6,7 +6,12 @@
   // genuinely needs a server, which nothing currently does.
   "compatibility_date": "2026-07-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Without this, Workers static assets defaults to `none` and answers an
+    // unknown path with a bare error body, ignoring the 404.html the build
+    // produces. Shipping src/pages/404.astro and not setting this would look
+    // like a working 404 locally and be a blank page in production.
+    "not_found_handling": "404-page"
   },
   // Serve the apex and www from the same deployment. Cloudflare already holds
   // the zone, so no DNS record needs creating by hand.
