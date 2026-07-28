@@ -43,6 +43,15 @@ jobs:
       - name: performance budget
         run: npm run budget
 
+      # Real viewport emulation, because headless Chrome's --window-size has a
+      # 500px floor and will happily render at 500 then crop the screenshot to
+      # 390, which looks exactly like a mobile overflow bug that is not there.
+      - name: install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: horizontal overflow at phone widths
+        run: npm run viewport
+
   # Deploy runs only after the gates above pass, and only from main. Routing the
   # deploy through Actions rather than Cloudflare's git integration is what makes
   # "nothing ships that did not pass the budget" a checkable statement.

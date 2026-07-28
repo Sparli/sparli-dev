@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "budget": "node scripts/check-budget.mjs"
+    "budget": "node scripts/check-budget.mjs",
+    "viewport": "node scripts/check-viewport.mjs --built"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "playwright": "^1.62.0",
     "typescript": "^5.7.0",
     "wrangler": "^4.115.0"
   }
