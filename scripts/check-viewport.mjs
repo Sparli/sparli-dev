@@ -33,17 +33,36 @@ const base = useBuilt ? `file://${process.cwd()}/dist` : "http://localhost:4321"
 
 // Check every page, not just the home page. A case study with a wide table is
 // far more likely to overflow than the page I happen to be looking at.
+//
+// Both branches are derived rather than listed. A hardcoded route list is a
+// second copy of the site's structure that goes stale silently: the page you
+// forgot to add is exactly the page nobody has looked at on a phone.
 async function routes() {
-  if (!useBuilt) return ["/", "/shipped/four-second-hangup/", "/shipped/agent-that-cannot-email-clients/"];
-  const found = [];
-  async function walk(dir, prefix = "") {
-    for (const e of await readdir(dir, { withFileTypes: true })) {
-      if (e.isDirectory()) await walk(join(dir, e.name), `${prefix}/${e.name}`);
-      else if (e.name === "index.html") found.push(`${prefix}/index.html`);
+  if (useBuilt) {
+    // Any .html, not just index.html, so 404.html is covered too.
+    const found = [];
+    async function walk(dir, prefix = "") {
+      for (const e of await readdir(dir, { withFileTypes: true })) {
+        if (e.isDirectory()) await walk(join(dir, e.name), `${prefix}/${e.name}`);
+        else if (e.name.endsWith(".html")) found.push(`${prefix}/${e.name}`);
+      }
     }
+    await walk("dist");
+    return found;
   }
-  await walk("dist");
-  return found;
+
+  // Dev server: reconstruct the routes from the sources Astro builds them from.
+  // Dynamic routes ([...id].astro) are skipped here and reached via the content
+  // files that populate them.
+  const pages = (await readdir("src/pages", { withFileTypes: true }))
+    .filter((e) => e.isFile() && e.name.endsWith(".astro") && !e.name.startsWith("["))
+    .map((e) => (e.name === "index.astro" ? "/" : `/${e.name.replace(/\.astro$/, "")}`));
+
+  const studies = (await readdir("src/content/shipped"))
+    .filter((f) => f.endsWith(".mdx"))
+    .map((f) => `/shipped/${f.replace(/\.mdx$/, "")}/`);
+
+  return [...pages, ...studies];
 }
 
 const browser = await chromium.launch();
