@@ -1,0 +1,380 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+// The case studies are the depth. This page's job is to be scannable and to
+// hand off, so each entry that HAS a write-up links to it rather than
+// restating it.
+//
+// Looked up by id, and a miss throws rather than returning null. Returning null
+// would silently drop the link and still build green, which is the failure this
+// lookup exists to prevent: an entry that quietly stops pointing at its own
+// evidence is worse than a build error, because nobody finds out. Entries with
+// no write-up pass `link: null` directly and never reach this function.
+const studies = new Map(
+  (await getCollection("shipped", ({ data }) => !data.draft)).map((e) => [e.id, e]),
+);
+const study = (id: string) => {
+  if (!studies.has(id)) {
+    throw new Error(
+      `cv.astro links to a case study that does not exist: "${id}". ` +
+        `Known ids: ${[...studies.keys()].join(", ")}`,
+    );
+  }
+  return `/shipped/${id}/`;
+};
+
+const delivery = [
+  {
+    title: "Tool-using agent operating on live client systems",
+    period: "2025",
+    context: "Croncore internal, daily production use",
+    body: "One tool surface, two runtimes: the same tools run against the Anthropic Messages API directly or through the Claude Agent SDK. It triages pull requests, tracks developer tasks and drafts client mail. Every side effect waits in a <b>pending_actions</b> row for a human, and each run is scoped to one <b>project_id</b> so context cannot leak between clients.",
+    link: study("agent-that-cannot-email-clients"),
+  },
+  {
+    title: "Bilingual education platform, live with Québec school boards",
+    period: "2024 to present",
+    context: "Co-led delivery, architecture owner for the next stage",
+    body: "EN/FR role-based platform in use with school boards. An EN/FR-parity Playwright suite means a regression in one language cannot ship because the other passed. Rewriting the generation prompts and the text handling cut text-render errors by roughly 80% with no model change, no added cost and no added latency. I now own the architecture for an orchestration layer where content, assessment and analytics agents read and write one shared learner record.",
+    link: null,
+  },
+  {
+    title: "Multi-provider LLM platform under load",
+    period: "2023 to 2025",
+    context: "Shurq, UK adtech startup",
+    body: "Tiered pricing with automatic provider fallback, self-hosted Ollama through to OpenAI, so a provider outage degraded cost and latency instead of taking the feature down. Stress-tested to 200+ concurrent users before release, with drift and latency dashboards handed to the team so degradation shows on a graph before a customer reports it.",
+    link: null,
+  },
+  {
+    title: "CRM-integrated agent under US and Canadian compliance rules",
+    period: "2025",
+    context: "US payment services, Canadian SEO SaaS",
+    body: "Full Pipedrive integration as agent-invoked actions, with the compliance layers built in-house: timezone-aware dialling windows, DNC scrubbing, mid-call opt-out detection, verbal-consent logging and CASL unsubscribe handling. The failure that took longest to find was two layers below where everyone was looking.",
+    link: study("four-second-hangup"),
+  },
+  {
+    title: "Retrieval agent that quotes prices from the client's own data",
+    period: "2025",
+    context: "Automotive, EU",
+    body: "A Django prototype taken to a production retrieval pipeline over pgvector with a query rewriter, and pricing synced live from the client's own sheets. A price change on their side lands without a redeploy, and no quoted figure comes from model memory.",
+    link: null,
+  },
+  {
+    title: "Speech service into a legacy PBX",
+    period: "2024",
+    context: "Language with no commercial vendor",
+    body: "Built and operated the serving stack: a self-hosted FastAPI service running two off-the-shelf engines behind one interface with fallback between them, producing audio that matched the client's existing Asterisk/FreePBX contract so nothing on the telephony side had to change.",
+    link: null,
+  },
+];
+
+const experience = [
+  {
+    org: "Croncore",
+    what: "AI engineering consultancy",
+    role: "Co-Founder & CTO",
+    when: "Jan 2025 to present",
+  },
+  {
+    org: "Shurq",
+    what: "UK adtech startup, joined at idea stage",
+    role: "Founding AI & Data Engineer",
+    when: "Jul 2022 to present, advisory since 2025",
+  },
+  {
+    org: "Freelance",
+    what: "AI / ML engineering for international clients",
+    role: "Top Rated on Upwork, Level 2 on Fiverr",
+    when: "2019 to 2022",
+  },
+];
+
+const skills = [
+  ["Languages", "Python · TypeScript/JavaScript · Node.js · SQL"],
+  [
+    "Agentic & LLM",
+    "tool-using agents · MCP tool servers · Anthropic tool use · OpenAI function calling · schema-validated structured outputs · RAG · provider fallback · human-in-the-loop approval gates · prompt-injection containment · eval design and calibration",
+  ],
+  [
+    "Backend",
+    "FastAPI · Django/DRF · Next.js · PostgreSQL · pgvector · Redis · BigQuery · Docker · async pipelines · rate limiting and backoff",
+  ],
+  [
+    "Cloud & ops",
+    "AWS · GCP · Azure · Vercel · Render · Cloudflare · GitHub Actions CI/CD · Prometheus/Grafana",
+  ],
+];
+
+const integrations =
+  "Twilio · Asterisk/FreePBX · Deepgram · ElevenLabs · Pipedrive · ClickUp · GitHub · Gmail · Google Sheets · Google Places · Stripe";
+---
+
+<Base
+  title="CV · Sparli Aman"
+  description="Seven years of client-side delivery: scoping with the customer's engineers, building agentic systems into their environment, and owning them after go-live. Islamabad, UTC+5."
+>
+  <section class="cvhead">
+    <h1>CV</h1>
+    <p class="lede">
+      Seven years of client-side delivery, end to end. I scope with the customer's engineers,
+      architect it, build it, deploy into their environment, and own it after go-live.
+    </p>
+    <p class="actions">
+      <a class="dl" href="/Sparli_Aman_CV.pdf">Download the PDF</a>
+      <span class="note">Two pages. Same facts, laid out for print.</span>
+    </p>
+  </section>
+
+  <h2 class="section">Selected delivery</h2>
+  <p class="sub">
+    Most of this is client work under NDA, so each entry describes architecture and outcomes rather
+    than showing source. Where there is a full write-up, it starts with what went wrong.
+  </p>
+
+  <ol class="entries">
+    {
+      delivery.map((d) => (
+        <li class="entry">
+          <div class="entry-head">
+            <h3>{d.title}</h3>
+            <span class="period">{d.period}</span>
+          </div>
+          <p class="context">{d.context}</p>
+          <p class="body" set:html={d.body} />
+          {d.link && (
+            <a class="more" href={d.link}>
+              Read the case study
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <h2 class="section">Experience</h2>
+  <ul class="rows">
+    {
+      experience.map((e) => (
+        <li>
+          <div class="rk">
+            <b>{e.org}</b>, {e.what}
+          </div>
+          <div class="rv">
+            {e.role}
+            <span class="when">{e.when}</span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 class="section">Integrated with</h2>
+  <p class="sub">Each one wired up and debugged in production, not read about.</p>
+  <p class="prose">{integrations}</p>
+
+  <h2 class="section">Skills</h2>
+  <dl class="skills">
+    {
+      skills.map(([k, v]) => (
+        <>
+          <dt>{k}</dt>
+          <dd>{v}</dd>
+        </>
+      ))
+    }
+  </dl>
+
+  <h2 class="section">Education and availability</h2>
+  <div class="prose">
+    <p>
+      BSc Software Engineering, Pak-Austria Fachhochschule, Institute of Applied Sciences and
+      Technology, Pakistan.
+    </p>
+    <p>
+      Remote, with working hours overlapping the EU in full and the US East coast by four hours. Set
+      up to work remotely long term, and equally open to relocation to the US, EU or UK where a role
+      calls for it. Available for customer travel and on-site work. Open as an employee, or on
+      contract through my consultancy.
+    </p>
+  </div>
+
+  <div class="cta">
+    <p>
+      <b>Hiring for a forward-deployed or solutions role?</b> Send me a real integration problem you
+      are dealing with and I will tell you how I would approach it. That is faster than a screening
+      call for both of us.
+    </p>
+    <p><a href="mailto:sparli@croncore.com">sparli@croncore.com</a></p>
+  </div>
+</Base>
+
+<style>
+  /* Scoped to this page. The shared classes in global.css cover the shell and
+   * the prose; everything below is CV-specific layout that would be dead weight
+   * on every other page. */
+
+  .cvhead {
+    padding: 40px 0 4px;
+  }
+  .cvhead h1 {
+    font-size: clamp(2rem, 6vw, 2.6rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+  .cvhead .lede {
+    max-width: var(--measure);
+    font-size: 1.06rem;
+    color: var(--muted);
+    margin: 0 0 22px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 14px;
+    margin: 0;
+  }
+  .dl {
+    display: inline-block;
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--raised);
+    font-weight: 600;
+    font-size: 0.94rem;
+    text-decoration: none;
+  }
+  .dl:hover {
+    border-color: var(--accent);
+  }
+  .note {
+    color: var(--faint);
+    font-size: 0.88rem;
+  }
+
+  .entries {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+  }
+  .entry {
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .entry:first-child {
+    border-top: 0;
+    padding-top: 6px;
+  }
+
+  .entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+  }
+  .entry-head h3 {
+    margin: 0;
+    font-size: 1.06rem;
+    line-height: 1.34;
+    /* Without this the title refuses to shrink and pushes the row wider than
+     * the viewport on a narrow phone. */
+    min-width: 0;
+  }
+  .period {
+    color: var(--faint);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .context {
+    margin: 3px 0 8px;
+    color: var(--faint);
+    font-size: 0.88rem;
+    font-style: italic;
+  }
+  .body {
+    margin: 0;
+    max-width: var(--measure);
+    color: var(--muted);
+  }
+
+  .more {
+    display: inline-block;
+    margin-top: 9px;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  .more::after {
+    content: " \2192";
+  }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .rows li {
+    display: grid;
+    gap: 2px 20px;
+    padding: 13px 0;
+    border-top: 1px solid var(--line);
+  }
+  .rows li:first-child {
+    border-top: 0;
+  }
+  .rk {
+    min-width: 0;
+  }
+  .rv {
+    color: var(--muted);
+    font-size: 0.94rem;
+    min-width: 0;
+  }
+  .when {
+    display: block;
+    color: var(--faint);
+    font-size: 0.85rem;
+  }
+
+  @media (min-width: 720px) {
+    .rows li {
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+    }
+    .rv {
+      text-align: right;
+    }
+  }
+
+  .skills {
+    display: grid;
+    gap: 4px 22px;
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .skills dt {
+    font-weight: 650;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+  .skills dd {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    min-width: 0;
+  }
+
+  @media (min-width: 720px) {
+    .skills {
+      grid-template-columns: 150px 1fr;
+    }
+    .skills dd {
+      margin-bottom: 6px;
+    }
+  }
+</style>
