@@ -6,9 +6,12 @@ interface Props {
   description: string;
   /** Case studies get article semantics and a canonical of their own. */
   article?: boolean;
+  /** The home page renders its own hero inside the dark band; other pages
+   *  get their content wrapped in the standard frame. */
+  bare?: boolean;
 }
 
-const { title, description, article = false } = Astro.props;
+const { title, description, article = false, bare = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -39,30 +42,31 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
          keyboard user can navigate and one they cannot. -->
     <a class="skip" href="#main">Skip to content</a>
 
-    <div class="wrap">
-      <nav class="nav" aria-label="Primary">
-        <a class="home" href="/">Sparli Aman</a>
+    <nav class="site" aria-label="Primary">
+      <div class="frame">
+        <a class="home" href="/">Sparli Aman<i>.</i></a>
         <ul>
-          <li><a href="/#shipped">Shipped</a></li>
-          <li><a href="/#writing">Writing</a></li>
-          <li><a href="/cv">CV</a></li>
+          <li><a href="/#pattern">Pattern</a></li>
+          <li><a href="/#cases">Case studies</a></li>
+          <li><a class="keep" href="/cv">CV</a></li>
+          <li><a class="mail" href="mailto:sparli@croncore.com">Email me</a></li>
         </ul>
-      </nav>
+      </div>
+    </nav>
 
-      <main id="main">
-        <slot />
-      </main>
+    <main id="main">
+      {bare ? <slot /> : <div class="frame"><slot /></div>}
+    </main>
 
-      <footer>
-        <span>Pakistan, UTC+5 &middot; full EU overlap, 4h US East</span>
+    <footer>
+      <div class="frame">
+        <span>Pakistan · UTC+5 · full EU overlap, 4h US East</span>
         <span>
-          <a href="mailto:sparli@croncore.com">sparli@croncore.com</a>
-          &nbsp;&middot;&nbsp;
-          <a href="https://github.com/Sparli">GitHub</a>
-          &nbsp;&middot;&nbsp;
-          <a href="https://linkedin.com/in/sparli-aman">LinkedIn</a>
+          <a href="https://github.com/Sparli">GitHub</a> ·
+          <a href="https://linkedin.com/in/sparli-aman">LinkedIn</a> ·
+          <a href="/cv">CV</a>
         </span>
-      </footer>
-    </div>
+      </div>
+    </footer>
   </body>
 </html>

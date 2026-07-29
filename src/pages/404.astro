@@ -4,7 +4,7 @@ import Base from "../layouts/Base.astro";
 
 // The 404 lists real destinations rather than saying "go home". Someone landing
 // here followed a link that was wrong or stale, and the useful response is the
-// two things they were most likely looking for, not an apology.
+// things they were most likely looking for, not an apology.
 //
 // Pulled from the collection rather than hardcoded, so a renamed case study
 // cannot leave a dead link on the page whose entire job is dead links.
@@ -17,31 +17,31 @@ const shipped = (await getCollection("shipped", ({ data }) => !data.draft)).sort
   title="Not found · Sparli Aman"
   description="That page does not exist. The case studies and CV are one link away."
 >
-  <section class="hero">
-    <h1>That page is not here.</h1>
+  <section class="row" style="border-top:0">
+    <div style="padding-top:24px">
+      <h2>That page is not here.</h2>
+      <p class="sub">
+        Either it moved or it was never written. Everything worth reading is one link away:
+        the <a href="/cv">CV</a>, the <a href="/#cases">case studies</a>, or
+        <a href="mailto:sparli@croncore.com">email</a>.
+      </p>
 
-    <p class="lede">
-      Either it moved or it was never written. Everything worth reading is one link away.
-    </p>
-
-    <p class="availability">
-      <a href="/cv">CV</a> &middot;
-      <a href="/#shipped">Shipped</a> &middot;
-      <a href="mailto:sparli@croncore.com">sparli@croncore.com</a>
-    </p>
+      <dl class="ledger">
+        {
+          shipped.map((entry) => (
+            <div>
+              <dt>
+                <a href={`/shipped/${entry.id}/`} style="text-decoration:none">
+                  {entry.data.period}
+                </a>
+              </dt>
+              <dd>
+                <a href={`/shipped/${entry.id}/`}>{entry.data.title}</a>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
   </section>
-
-  <h2 class="section">Shipped</h2>
-  <ul class="shipped">
-    {
-      shipped.map((entry) => (
-        <li>
-          <a class="card" href={`/shipped/${entry.id}/`}>
-            <h3>{entry.data.title}</h3>
-            <p class="outcome" set:html={entry.data.outcome} />
-          </a>
-        </li>
-      ))
-    }
-  </ul>
 </Base>

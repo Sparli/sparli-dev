@@ -1,81 +1,129 @@
-/* Hand-written, no framework, no build step beyond Astro's own.
+/* ═══════════════════════════════════════════════════════════════════════
+ * sparli.dev — "the control room"
  *
- * The constraint that shaped this file: it has to be debuggable at 11pm by the
- * person who wrote it. That rules out utility classes and CSS-in-JS, and it is
- * also why there is no dark-mode toggle -- a toggle is a JS dependency and a
- * state bug for a preference the operating system already knows.
- * prefers-color-scheme costs nothing and is always right. */
+ * Hand-written, no framework. The page is dark-bookended: a dark hero band
+ * carrying a CSS-animated agent workflow (the "video" that costs zero bytes
+ * of JavaScript and zero video bytes), a light ledger body, and a dark
+ * colophon that closes with the site's own measured numbers.
+ *
+ * Two design rules learned from auditing the strongest engineer portfolios
+ * (paco.me, emilkowal.ski, frankchimero.com):
+ *   1. Almost no boxes. Structure comes from a label column, hairline rows
+ *      and space — not from cards. A border is the cheap way to look
+ *      organised; alignment is the honest one.
+ *   2. One serif, spent sparingly: the thesis and headings only. It renders
+ *      as Didot on Apple devices and Georgia elsewhere — a system stack, so
+ *      the zero-external-requests claim holds.
+ *
+ * The --d-* tokens are a fixed dark world for the hero band and colophon.
+ * They deliberately do NOT flip with the theme: those surfaces are designed
+ * dark, the way a printed page has a dark plate. Body tokens follow
+ * prefers-color-scheme as before.
+ * ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --ink: #16191c;
-  --muted: #545c64;
-  --faint: #767f88;
-  --line: #e2e6ea;
-  --bg: #ffffff;
-  --raised: #f6f8fa;
-  --accent: #1f4b73;
-  --good: #1a6b47;
+  --bg: #fdfdfc;
+  --paper: #f5f5f3;
+  --line: #e4e4e0;
+  --line-strong: #cfcfc9;
+  --ink: #1a1c20;
+  --muted: #4b4f56;
+  --faint: #7c8087;
+  --accent: #3a56c4;
+  --accent-ghost: #eef1fb;
+  --bad: #9c5700;
+  --good: #177a52;
+  --good-bg: #e8f6ee;
 
-  --measure: 68ch;
-  --wide: 940px;
+  /* the fixed dark world */
+  --d-bg: #0d0f13;
+  --d-panel: #14171c;
+  --d-line: #252932;
+  --d-line2: #394050;
+  --d-ink: #eef0f3;
+  --d-muted: #a6abb5;
+  --d-faint: #767c88;
+  --d-accent: #9eb1ff;
+  --d-good: #3dd68c;
+  --d-bad: #e5a53a;
 
-  --sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Didot", "Bodoni 72", Didot, Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans",
+    "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --t-micro: 11.5px;
+  --t-meta: 13px;
+  --t-small: 15px;
+  --t-body: 16.5px;
+  --t-lead: 19px;
+  --t-thesis: clamp(2rem, 1.05rem + 3.8vw, 3.6rem);
+  --t-h2: clamp(1.5rem, 1.28rem + 0.9vw, 1.95rem);
+  --t-inum: clamp(2.6rem, 2rem + 2.4vw, 4rem);
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px;
+  --s6: 32px; --s7: 48px; --s8: 72px;
+
+  --frame: 1060px;
+  --label: 172px;
+
+  /* aliases kept for the CV page's scoped styles */
+  --raised: var(--paper);
+  --measure: 62ch;
+  --wide: var(--frame);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ink: #e8ebee;
-    --muted: #a2abb4;
-    --faint: #7d868f;
-    --line: #262b31;
-    --bg: #0e1115;
-    --raised: #161a1f;
-    --accent: #7fb3e0;
-    --good: #5fc99b;
+    --bg: #131417;
+    --paper: #1a1c20;
+    --line: #292c31;
+    --line-strong: #3e4249;
+    --ink: #ecedef;
+    --muted: #b1b5bc;
+    --faint: #83878f;
+    --accent: #9eb1ff;
+    --accent-ghost: #1c2646;
+    --bad: #ffca16;
+    --good: #3dd68c;
+    --good-bg: #10291d;
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
+html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  /* Grid and flex children default to min-width:auto, which means they refuse to
-   * shrink below their content and silently push the page wider than the
-   * viewport. Combined with min-width:0 on the grid cells below, this is what
-   * keeps the layout inside 390px. */
-  overflow-wrap: break-word;
-  font-family: var(--sans);
-  font-size: 17px;
-  line-height: 1.62;
-  color: var(--ink);
   background: var(--bg);
-  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  font-variant-numeric: tabular-nums;
 }
 
-.wrap {
-  max-width: var(--wide);
-  margin: 0 auto;
-  padding: 0 22px;
+a { color: var(--accent); }
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+code { overflow-wrap: anywhere; }
 
-.prose {
-  max-width: var(--measure);
+.frame { max-width: var(--frame); margin: 0 auto; padding: 0 var(--s5); }
+@media (min-width: 900px) { .frame { padding: 0 var(--s6); } }
+
+/* Motion is a garnish here, never a dependency: everything animated is
+ * legible when still, so switching it all off loses nothing. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
 /* ---------- skip link: first tab stop, hidden until focused ---------- */
@@ -88,318 +136,380 @@ body {
   padding: 10px 16px;
   z-index: 10;
 }
-.skip:focus {
-  left: 0;
-}
+.skip:focus { left: 0; }
 
-/* ---------- nav ---------- */
-.nav {
+/* ---------- nav: dark on every page, part of the band on the home page -- */
+nav.site {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--d-bg);
+  border-bottom: 1px solid var(--d-line);
+}
+nav.site .frame {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  padding: 22px 0 18px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4);
+  padding-top: 13px;
+  padding-bottom: 13px;
 }
-.nav a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 15px;
+nav.site .home {
+  font-size: 15px; font-weight: 700; color: var(--d-ink);
+  text-decoration: none; white-space: nowrap;
 }
-.nav a:hover,
-.nav a:focus-visible {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+nav.site .home i { font-style: normal; color: var(--d-accent); }
+nav.site ul {
+  display: flex; gap: var(--s1); list-style: none;
+  margin: 0; padding: 0; align-items: center;
 }
-.nav .home {
-  color: var(--ink);
-  font-weight: 650;
-  font-size: 16px;
+nav.site ul a {
+  font-size: var(--t-meta); color: var(--d-muted); text-decoration: none;
+  padding: 9px 10px; border-radius: 4px;
 }
-.nav ul {
-  display: flex;
-  gap: 20px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+nav.site ul a:hover { color: var(--d-ink); background: var(--d-panel); }
+nav.site .mail {
+  border: 1px solid var(--d-line2); color: var(--d-ink);
+  font-weight: 600; white-space: nowrap;
 }
+nav.site .mail:hover { border-color: var(--d-accent); color: var(--d-accent); }
+@media (max-width: 560px) { nav.site ul a:not(.mail):not(.keep) { display: none; } }
 
-/* ---------- hero ---------- */
-.hero {
-  padding: 20px 0 6px;
-}
-.hero h1 {
-  font-size: clamp(30px, 6vw, 42px);
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  margin: 0 0 14px;
-}
-.hero .lede {
-  font-size: clamp(18px, 2.6vw, 21px);
-  line-height: 1.5;
-  color: var(--ink);
-  max-width: 46ch;
-  margin: 0 0 26px;
-}
-.hero .lede b {
-  font-weight: 650;
-}
+/* ---------- the dark hero band ---------- */
+.band { background: var(--d-bg); color: var(--d-ink); }
 
-/* Four numbers, not a tagline. A tagline is a claim; a number is checkable, and
- * on a 390px phone this strip is the last thing above the fold. */
-.numbers {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 0 0 22px;
+.hero .frame {
+  display: grid; gap: var(--s6);
+  padding-top: var(--s7);
+  align-items: end;
 }
-@media (min-width: 720px) {
-  .numbers {
-    grid-template-columns: repeat(4, 1fr);
+@media (min-width: 900px) {
+  .hero .frame {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--s8);
+    padding-top: var(--s8);
   }
 }
-.numbers div {
-  background: var(--bg);
-  padding: 14px 16px;
-  min-width: 0; /* without this the cells cannot shrink and the page overflows */
+.kicker {
+  font-family: var(--mono); font-size: var(--t-meta); letter-spacing: 0.06em;
+  color: var(--d-faint); margin: 0 0 var(--s4);
 }
-.numbers .n {
-  display: block;
-  font-size: 23px;
-  font-weight: 680;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+.kicker b { color: var(--d-accent); font-weight: 700; }
+.hero h1 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-thesis);
+  line-height: 1.07; letter-spacing: -0.012em;
+  margin: 0 0 var(--s5); max-width: 17ch; color: var(--d-ink);
 }
-.numbers .l {
-  display: block;
-  font-size: 12.5px;
-  color: var(--muted);
-  margin-top: 3px;
-  line-height: 1.35;
+.hero h1 em { font-style: italic; color: var(--d-accent); }
+.hero .lede {
+  font-size: var(--t-lead); line-height: 1.5; color: var(--d-muted);
+  margin: 0 0 var(--s5); max-width: 42ch;
+}
+.facts {
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
+  font-size: var(--t-meta); color: var(--d-faint);
+  margin: 0 0 var(--s6); font-family: var(--mono);
+}
+.facts b { color: var(--d-ink); font-weight: 600; }
+
+/* the portrait: duotone, grounded to the band's bottom edge */
+.portrait { position: relative; justify-self: center; width: min(300px, 80%); align-self: end; }
+@media (min-width: 900px) { .portrait { width: 100%; max-width: 340px; justify-self: end; } }
+.portrait img {
+  display: block; width: 100%; height: auto;
+  filter: grayscale(1) contrast(1.06) brightness(0.96);
+}
+.portrait .tint {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, rgba(94, 120, 220, 0.28), rgba(13, 15, 19, 0) 55%);
+  mix-blend-mode: screen; pointer-events: none;
+}
+.portrait .fade {
+  position: absolute; inset: auto 0 0 0; height: 26%;
+  background: linear-gradient(rgba(13, 15, 19, 0), var(--d-bg));
+  pointer-events: none;
+}
+.portrait::before {
+  content: ""; position: absolute; inset: 6% -7% 0 auto; width: 58%;
+  border: 1px solid var(--d-line2); pointer-events: none;
+}
+.portrait .sig {
+  position: absolute; left: 0; bottom: 6%;
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.07em;
+  color: var(--d-muted); background: rgba(13, 15, 19, 0.72); padding: 5px 9px;
 }
 
-.availability {
-  font-size: 14.5px;
-  color: var(--muted);
-  margin: 0 0 8px;
-  max-width: var(--measure);
+/* ---------- the live workflow: the hero's "video", CSS only ---------- */
+.flow { padding: var(--s6) 0 var(--s7); border-top: 1px solid var(--d-line); }
+.flowhead {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: var(--s4); flex-wrap: wrap; margin-bottom: var(--s4);
 }
-.availability code {
-  overflow-wrap: anywhere;
+.flowhead p {
+  margin: 0; font-family: var(--mono); font-size: var(--t-micro);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--d-faint);
+}
+.flowhead .live { color: var(--d-good); }
+.flowhead .live::before { content: "●"; margin-right: 6px; animation: blink 2.4s ease-in-out infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.flowviz { overflow-x: auto; }
+.flowviz svg { display: block; width: 100%; height: auto; min-width: 560px; }
+/* wires: flowing dashes read as data moving */
+.wire {
+  stroke: var(--d-line2); stroke-width: 1.5; fill: none;
+  stroke-dasharray: 5 9; animation: flowdash 1.15s linear infinite;
+}
+@keyframes flowdash { to { stroke-dashoffset: -14; } }
+.node rect { fill: var(--d-panel); stroke: var(--d-line2); stroke-width: 1.2; }
+.node .ttl { font-size: 13px; fill: var(--d-muted); }
+.node .sub { font-size: 10px; fill: var(--d-faint); }
+/* nodes glow in sequence over one 8s cycle; the last one confirms in green */
+.n1 rect { animation: glow1 8s ease-in-out infinite; }
+.n2 rect { animation: glow2 8s ease-in-out infinite; }
+.n3 rect { animation: glow3 8s ease-in-out infinite; }
+.n4 rect { animation: glow4 8s ease-in-out infinite; }
+@keyframes glow1 { 0%, 18% { stroke: var(--d-accent); } 22%, 100% { stroke: var(--d-line2); } }
+@keyframes glow2 { 20%, 38% { stroke: var(--d-accent); } 0%, 16%, 42%, 100% { stroke: var(--d-line2); } }
+@keyframes glow3 { 40%, 62% { stroke: var(--d-accent); } 0%, 36%, 66%, 100% { stroke: var(--d-line2); } }
+@keyframes glow4 { 64%, 88% { stroke: var(--d-good); } 0%, 60%, 92%, 100% { stroke: var(--d-line2); } }
+.status text { font-family: var(--mono); font-size: 11px; fill: var(--d-faint); opacity: 0; }
+.status .s1 { animation: st1 8s linear infinite; }
+.status .s2 { animation: st2 8s linear infinite; }
+.status .s3 { animation: st3 8s linear infinite; }
+@keyframes st1 { 0%, 30% { opacity: 1; } 34%, 100% { opacity: 0; } }
+@keyframes st2 { 36%, 62% { opacity: 1; } 0%, 32%, 66%, 100% { opacity: 0; } }
+@keyframes st3 { 68%, 96% { opacity: 1; } 0%, 64%, 100% { opacity: 0; } }
+.gatechip { fill: var(--d-good); opacity: 0; animation: chip 8s ease-in-out infinite; }
+@keyframes chip { 70%, 90% { opacity: 1; } 0%, 64%, 96%, 100% { opacity: 0; } }
+
+/* ---------- light body: label column + ledger rows ---------- */
+.row { padding: var(--s7) 0; border-top: 1px solid var(--line); }
+.row:first-of-type { border-top: 0; }
+@media (min-width: 900px) {
+  .row .frame {
+    display: grid;
+    grid-template-columns: var(--label) minmax(0, 1fr);
+    gap: var(--s7);
+  }
+}
+.lab {
+  font-family: var(--mono); font-size: var(--t-meta); letter-spacing: 0.06em;
+  color: var(--faint); margin: 0 0 var(--s5); padding-top: 6px;
+}
+.lab b { color: var(--accent); font-weight: 700; display: block; margin-bottom: 2px; }
+@media (min-width: 900px) { .lab { margin: 0; position: sticky; top: 76px; align-self: start; } }
+section { scroll-margin-top: 72px; }
+
+h2 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-h2);
+  line-height: 1.18; letter-spacing: -0.008em;
+  margin: 0 0 var(--s3); max-width: 26ch;
+}
+.sub {
+  margin: 0 0 var(--s6); font-size: var(--t-small); color: var(--faint);
+  max-width: 56ch; line-height: 1.55;
 }
 
-a {
-  color: var(--accent);
+.ledger { margin: 0; border-top: 1px solid var(--line-strong); }
+.ledger > div {
+  display: grid; gap: var(--s1) var(--s5);
+  padding: var(--s4) 0; border-bottom: 1px solid var(--line);
 }
+@media (min-width: 700px) {
+  .ledger > div { grid-template-columns: 148px minmax(0, 1fr) auto; align-items: baseline; }
+}
+.ledger dt { font-family: var(--mono); font-size: var(--t-meta); font-weight: 700; color: var(--ink); }
+.ledger dd { margin: 0; font-size: var(--t-small); color: var(--muted); line-height: 1.55; max-width: 58ch; }
+.ledger dd code {
+  font-family: var(--mono); font-size: 0.88em; background: var(--paper);
+  padding: 1px 5px; border-radius: 3px; color: var(--ink);
+}
+.ledger .tag2 { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); white-space: nowrap; }
 
-/* ---------- section headings ---------- */
+/* ---------- case studies on the home page ---------- */
+.inc { padding: var(--s7) 0 var(--s6); }
+.inc + .inc { border-top: 1px solid var(--line); }
+.inc .top {
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s5); align-items: start; margin: 0 0 var(--s5);
+}
+.inc .no {
+  font-family: var(--serif); font-style: italic; font-weight: 500;
+  font-size: var(--t-inum); line-height: 0.9; color: var(--line-strong);
+  letter-spacing: -0.03em; padding-top: 4px; font-variant-numeric: normal;
+}
+.inc h3 {
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(1.4rem, 1.2rem + 0.9vw, 1.85rem);
+  line-height: 1.18; letter-spacing: -0.006em;
+  margin: 0 0 var(--s2); max-width: 24ch;
+}
+.inc .ctx {
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--faint); margin: 0;
+}
+.inc .body { display: grid; gap: var(--s5); }
+@media (min-width: 900px) {
+  .inc .body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--s7); align-items: start; }
+}
+.inc .sum { margin: 0; font-size: var(--t-small); color: var(--muted); line-height: 1.62; max-width: 46ch; }
+.inc .sum b { color: var(--ink); font-weight: 650; }
+.inc .more { display: inline-block; margin-top: var(--s4); font-size: var(--t-meta); font-weight: 650; text-decoration: none; }
+.inc .more::after { content: "\00a0\2192"; display: inline-block; transition: transform 0.15s ease; }
+.inc .more:hover::after { transform: translateX(3px); }
+.inc figure { margin: 0; }
+.outcome {
+  display: flex; gap: var(--s3); align-items: baseline; margin: var(--s4) 0 0;
+  font-family: var(--mono); font-size: var(--t-meta);
+}
+.outcome .k { color: var(--faint); text-transform: uppercase; font-size: var(--t-micro); letter-spacing: 0.07em; }
+.outcome .v { color: var(--good); font-weight: 700; }
+
+/* media frame: today an animated diagram; a <video preload="none" poster>
+ * replaces the inner svg 1:1 later — frame, ratio and caption stay put. */
+.clip {
+  position: relative; aspect-ratio: 16 / 9; background: var(--d-bg);
+  border: 1px solid var(--line-strong);
+  display: grid; place-items: center; overflow: hidden;
+}
+.clip svg { width: 92%; height: auto; display: block; }
+.clip .badge {
+  position: absolute; top: 10px; left: 10px;
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.06em;
+  color: var(--d-muted); background: rgba(13, 15, 19, 0.8);
+  border: 1px solid var(--d-line); padding: 4px 8px;
+}
+figcaption { margin: var(--s2) 0 0; font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); }
+/* clip 1: the pulse rides the call timeline to the hang-up */
+.pulse { fill: var(--d-bad); animation: ride 6s ease-in-out infinite; }
+@keyframes ride {
+  0%, 8% { transform: translateX(0); }
+  45%, 55% { transform: translateX(170px); }
+  88%, 100% { transform: translateX(360px); }
+}
+.hangup { opacity: 0; animation: hang 6s ease-in-out infinite; }
+@keyframes hang { 88%, 100% { opacity: 1; } 0%, 84% { opacity: 0; } }
+/* clip 2: a pending row appears, then the approval lands */
+.tick { opacity: 0; animation: tickin 7s ease-in-out infinite; }
+@keyframes tickin { 55%, 85% { opacity: 1; } 0%, 50%, 92%, 100% { opacity: 0; } }
+.rowpulse { opacity: 0; animation: rowin 7s ease-in-out infinite; }
+@keyframes rowin { 18%, 48% { opacity: 1; } 0%, 12%, 52%, 100% { opacity: 0; } }
+
+/* ---------- method + stack ---------- */
+.pos { display: grid; gap: 0; border-top: 1px solid var(--line-strong); }
+.pos > div {
+  padding: var(--s4) 0; border-bottom: 1px solid var(--line);
+  display: grid; gap: var(--s1) var(--s5);
+}
+@media (min-width: 700px) {
+  .pos > div { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; }
+}
+.pos h3 { font-size: var(--t-small); font-weight: 700; margin: 0; color: var(--ink); font-family: var(--sans); }
+.pos p { margin: 0; font-size: var(--t-meta); color: var(--muted); line-height: 1.6; max-width: 52ch; }
+
+.stackline { font-family: var(--mono); font-size: var(--t-meta); color: var(--muted); line-height: 2.1; margin: 0; max-width: 64ch; }
+.stackline b { color: var(--ink); font-weight: 600; }
+
+/* ---------- colophon ---------- */
+.colophon { background: var(--d-bg); color: var(--d-ink); margin-top: var(--s8); }
+.colophon .frame { padding-top: var(--s8); padding-bottom: var(--s7); }
+.colophon .kicker { color: var(--d-faint); }
+.colophon .kicker b { color: var(--d-accent); }
+.colophon h2 { color: var(--d-ink); max-width: 24ch; }
+.colophon .sub { color: var(--d-muted); max-width: 58ch; }
+.meas {
+  display: grid; gap: 1px; background: var(--d-line);
+  border: 1px solid var(--d-line); margin: var(--s6) 0;
+}
+@media (min-width: 700px) { .meas { grid-template-columns: repeat(4, 1fr); } }
+.meas > div { background: var(--d-panel); padding: var(--s4); }
+.meas .v {
+  font-family: var(--mono); font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem);
+  font-weight: 700; color: var(--d-ink); display: block;
+}
+.meas .v i { font-style: normal; color: var(--d-accent); font-size: 0.6em; font-weight: 400; }
+.meas .k { font-size: var(--t-micro); color: var(--d-muted); line-height: 1.45; display: block; margin-top: var(--s1); }
+.colophon .fine { font-size: var(--t-meta); color: var(--d-muted); line-height: 1.65; max-width: 60ch; margin: 0; }
+.colophon .fine a { color: var(--d-accent); }
+.colophon .cta2 { margin: var(--s6) 0 0; display: flex; gap: var(--s4); flex-wrap: wrap; align-items: center; }
+.colophon .btn {
+  display: inline-block; background: var(--d-accent); color: var(--d-bg);
+  text-decoration: none; font-weight: 650; padding: 12px 22px;
+  border-radius: 5px; font-size: var(--t-small);
+}
+.colophon .alt { font-size: var(--t-meta); color: var(--d-muted); }
+
+footer { background: var(--d-bg); border-top: 1px solid var(--d-line); }
+footer .frame {
+  display: flex; justify-content: space-between; gap: var(--s3); flex-wrap: wrap;
+  padding-top: var(--s5); padding-bottom: var(--s6);
+  font-family: var(--mono); font-size: var(--t-micro); color: var(--d-faint);
+}
+footer a { color: var(--d-faint); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+ * Case-study pages (/shipped/*) and the CV keep their class names from the
+ * previous stylesheet; restyled here to the new system.
+ * ═══════════════════════════════════════════════════════════════════════ */
 h2.section {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--faint);
-  font-weight: 680;
-  margin: 46px 0 4px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: var(--t-micro); text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--faint); font-weight: 600;
+  margin: 46px 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  max-width: none;
 }
-h2.section + .sub {
-  font-size: 14.5px;
-  color: var(--muted);
-  margin: 10px 0 18px;
-  max-width: var(--measure);
-}
+h2.section + .sub { margin: 10px 0 18px; }
+.prose { max-width: var(--measure); }
+.prose p { color: var(--muted); }
+.prose b { color: var(--ink); }
 
-/* ---------- shipped list: the home page IS the index ---------- */
-.shipped {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.shipped li {
-  border-bottom: 1px solid var(--line);
-}
-.shipped a.card {
-  display: block;
-  padding: 18px 0;
-  text-decoration: none;
-  color: inherit;
-}
-.shipped a.card:hover h3,
-.shipped a.card:focus-visible h3 {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.shipped h3 {
-  font-size: 19px;
-  line-height: 1.35;
-  margin: 0 0 5px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-}
-.shipped .outcome {
-  margin: 0 0 9px;
-  color: var(--muted);
-  font-size: 15.5px;
-  max-width: var(--measure);
-}
-.shipped .outcome b {
-  color: var(--ink);
-  font-weight: 650;
-}
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  align-items: center;
-}
-.tag {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  font-size: 11.5px;
-  font-family: var(--mono);
-  color: var(--muted);
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 2px 7px;
-}
-.tag.evidence {
-  color: var(--good);
-  border-color: color-mix(in srgb, var(--good) 30%, var(--line));
-}
-
-/* ---------- case study ---------- */
 .study h1 {
-  font-size: clamp(26px, 5vw, 34px);
-  line-height: 1.18;
-  letter-spacing: -0.02em;
-  margin: 12px 0 10px;
-  max-width: 24ch;
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(1.7rem, 1.3rem + 1.8vw, 2.4rem);
+  line-height: 1.16; letter-spacing: -0.01em; margin: 12px 0 10px; max-width: 24ch;
 }
-.study .meta {
-  font-size: 14px;
-  color: var(--faint);
-  margin: 0 0 26px;
-}
-.study h2 {
-  font-size: 19px;
-  margin: 34px 0 10px;
-  letter-spacing: -0.01em;
-}
-.study p,
-.study li {
-  max-width: var(--measure);
-}
+.study .meta { font-family: var(--mono); font-size: var(--t-meta); color: var(--faint); margin: 0 0 26px; }
+.study h2 { font-size: 21px; margin: 34px 0 10px; max-width: none; }
+.study p, .study li { max-width: var(--measure); }
 .study table {
-  border-collapse: collapse;
-  width: 100%;
-  max-width: var(--measure);
-  margin: 20px 0;
-  font-size: 15px;
-  display: block;
-  overflow-x: auto;
+  border-collapse: collapse; width: 100%; max-width: var(--measure);
+  margin: 20px 0; font-size: 15px; display: block; overflow-x: auto;
 }
-.study th,
-.study td {
-  border: 1px solid var(--line);
-  padding: 9px 12px;
-  text-align: left;
-}
-.study th {
-  background: var(--raised);
-  font-weight: 650;
-}
+.study th, .study td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; }
+.study th { background: var(--paper); font-weight: 650; }
 .study code {
-  overflow-wrap: anywhere;
-  font-family: var(--mono);
-  font-size: 0.88em;
-  background: var(--raised);
-  padding: 1px 5px;
-  border-radius: 4px;
+  overflow-wrap: anywhere; font-family: var(--mono); font-size: 0.88em;
+  background: var(--paper); padding: 1px 5px; border-radius: 3px;
 }
 .study pre {
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
-  overflow-x: auto;
-  font-size: 14px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px 16px; overflow-x: auto; font-size: 14px;
 }
-.study pre code {
-  background: none;
-  padding: 0;
-}
+.study pre code { background: none; padding: 0; }
 .study blockquote {
-  margin: 20px 0;
-  padding: 2px 0 2px 18px;
-  border-left: 3px solid var(--line);
-  color: var(--muted);
+  margin: 20px 0; padding: 2px 0 2px 18px;
+  border-left: 3px solid var(--line); color: var(--muted);
 }
+
+.tags { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+.tag {
+  min-width: 0; overflow-wrap: anywhere; font-size: var(--t-micro);
+  font-family: var(--mono); color: var(--muted); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px;
+}
+.tag.evidence { color: var(--good); }
 
 .callout {
-  background: var(--raised);
-  border: 1px solid var(--line);
+  background: var(--paper); border: 1px solid var(--line);
   border-left: 3px solid var(--accent);
-  border-radius: 0 8px 8px 0;
-  padding: 14px 18px;
-  margin: 24px 0;
-  font-size: 15.5px;
+  padding: 14px 18px; margin: 24px 0; font-size: var(--t-small);
   max-width: var(--measure);
 }
-.callout p:last-child {
-  margin-bottom: 0;
-}
+.callout p:last-child { margin-bottom: 0; }
 
-/* The CTA repeats at the bottom of every case study, because that is the page a
- * reader is on at the moment they are convinced. */
 .cta {
-  margin: 44px 0 10px;
-  padding: 20px 22px;
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  margin: 44px 0 10px; padding: 20px 22px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
   max-width: var(--measure);
 }
-.cta p {
-  margin: 0 0 6px;
-}
-.cta a {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-code {
-  overflow-wrap: anywhere;
-}
-
-a {
-  color: var(--accent);
-}
-a:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-footer {
-  margin: 64px 0 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-  font-size: 14px;
-  color: var(--faint);
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-footer a {
-  color: var(--muted);
-}
+.cta p { margin: 0 0 6px; }
+.cta a { color: var(--accent); font-weight: 600; }

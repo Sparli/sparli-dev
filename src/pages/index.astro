@@ -7,113 +7,420 @@ import Base from "../layouts/Base.astro";
 const shipped = (await getCollection("shipped", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
 );
+
+/**
+ * Home-page presentation for each case study: the short summary, the one
+ * measured outcome, and which drawn clip the media frame shows. Keyed by
+ * collection id and checked at build time: a case study without a home-page
+ * entry fails the build here rather than silently vanishing from the page
+ * that exists to sell it. (Same philosophy as the schema's `evidence` gate.)
+ */
+const home: Record<
+  string,
+  { sum: string; sum2?: string; outcomeK: string; outcomeV: string; clip?: "call" | "queue" }
+> = {
+  "four-second-hangup": {
+    sum: `The prospect said &ldquo;hello&rdquo;. Speech-to-text, working on a noisy first
+      packet, heard <b>&ldquo;no&rdquo;</b>, and a perfectly reasonable end-call rule did the rest. Two correct behaviours composing into a wrong one. The logs were structurally
+      incapable of showing it: every line in them was correct.
+      <b>Found by listening to the recordings.</b>`,
+    outcomeK: "after",
+    outcomeV: "0 false hang-ups",
+    clip: "call",
+  },
+  "agent-that-cannot-email-clients": {
+    sum: `A prompt saying &ldquo;always ask before sending&rdquo; is a request, and its failure
+      is silent. So the send capability <b>does not exist</b>: no tool emails a client, no tool
+      posts to ClickUp. Proposed actions land in a table and wait for a human. The worst case
+      stops being a wrong message to a customer and becomes
+      <b>a badly worded row that gets rejected</b>.`,
+    outcomeK: "today",
+    outcomeV: "0 code paths that send",
+    clip: "queue",
+  },
+  "mongolian-speech-legacy-pbx": {
+    sum: `The client needed Mongolian speech in a running call flow. No commercial vendor
+      offered it, and the telephony side was a live Asterisk/FreePBX install whose audio
+      contract could not change: sample rate, encoding, timing, all fixed.
+      <b>I built and operated the serving stack; I did not train the models</b>, and I will say
+      which part was mine before you ask.`,
+    sum2: `A self-hosted FastAPI service running two off-the-shelf speech engines behind one
+      interface, with fallback between them, producing audio that dropped straight into the
+      existing call flow.`,
+    outcomeK: "result",
+    outcomeV: "nothing on the telephony side changed",
+  },
+};
+
+for (const entry of shipped) {
+  if (!home[entry.id]) {
+    throw new Error(
+      `index.astro has no home-page presentation for case study "${entry.id}". ` +
+        `Add it to the \`home\` map. Known ids: ${Object.keys(home).join(", ")}`,
+    );
+  }
+}
 ---
 
 <Base
-  title="Sparli Aman · agentic AI systems in production"
-  description="I build agentic systems that act on other companies' production infrastructure: tool-using agents wired into CRMs, ticketing, repos and regulated comms, behind approval gates."
+  bare
+  title="Sparli Aman · production agent engineer"
+  description="Agents are easy to demo. Running one in someone else's production is a different job. Tool-using agents wired into CRMs, telephony, repos and regulated comms, behind approval gates."
 >
-  <section class="hero">
-    <h1>I put agents into other people's production systems.</h1>
+  <div class="band">
+    <header class="hero">
+      <div class="frame">
+        <div>
+          <p class="kicker"><b>Sparli Aman</b> · production agent engineer</p>
+          <h1>Agents are easy to demo. Running one in <em>someone else&rsquo;s production</em> is a different job.</h1>
+          <p class="lede">
+            I wire tool-using agents into CRMs, telephony, repos and regulated comms. I get
+            called when one is doing something wrong.
+          </p>
+          <p class="facts">
+            <span><b>7y</b> client-side delivery</span>
+            <span>live in <b>US · CA · UK</b></span>
+            <span><b>UTC+5</b> full EU overlap</span>
+          </p>
+        </div>
+        <div class="portrait">
+          <img src="/portrait.jpg" alt="Sparli Aman" width="450" height="600" />
+          <div class="tint"></div>
+          <div class="fade"></div>
+          <span class="sig">sparli aman · pakistan → everywhere</span>
+        </div>
+      </div>
+    </header>
 
-    <p class="lede">
-      Tool-using agents wired into CRMs, ticketing, repos and regulated comms.
-      <b>Behind approval gates, so nothing irreversible happens without a human.</b>
-    </p>
-
-    <!-- Four numbers instead of a tagline. A tagline is a claim; a number is
-         checkable, and each of these traces to something on this page. -->
-    <div class="numbers">
-      <div>
-        <span class="n">7 yrs</span>
-        <span class="l">client-side delivery, scoping to production support</span>
-      </div>
-      <div>
-        <span class="n">3</span>
-        <span class="l">countries with systems live: US, CA, UK</span>
-      </div>
-      <div>
-        <span class="n">200+</span>
-        <span class="l">concurrent users stress-tested before release</span>
-      </div>
-      <div>
-        <span class="n">~80%</span>
-        <span class="l">fewer text-render errors, no model change, no added cost</span>
+    <!-- The hero's "video": the production pipeline, drawn and moving. CSS
+         animation only, so it costs zero bytes of JavaScript and zero video
+         bytes — which is the point, and the badge says so. -->
+    <div class="flow">
+      <div class="frame">
+        <div class="flowhead">
+          <p>How my agents run in production</p>
+          <p class="live">live loop · css only, zero js</p>
+        </div>
+        <div class="flowviz">
+          <svg
+            viewBox="0 0 940 150"
+            role="img"
+            aria-label="An animated agent pipeline: a task reaches the agent, the agent proposes an action, the action waits in pending_actions, a human approves it, and only then is it executed. The loop repeats."
+          >
+            <g font-family="ui-monospace,Menlo,monospace">
+              <path class="wire" d="M160 62 H208"></path>
+              <path class="wire" d="M410 62 H458"></path>
+              <path class="wire" d="M660 62 H708"></path>
+              <g class="node n1">
+                <rect x="10" y="30" width="150" height="64" rx="4"></rect>
+                <text class="ttl" x="85" y="57" text-anchor="middle">task arrives</text>
+                <text class="sub" x="85" y="76" text-anchor="middle">cron · webhook · call</text>
+              </g>
+              <g class="node n2">
+                <rect x="208" y="30" width="202" height="64" rx="4"></rect>
+                <text class="ttl" x="309" y="57" text-anchor="middle">agent proposes</text>
+                <text class="sub" x="309" y="76" text-anchor="middle">tools · context · plan</text>
+              </g>
+              <g class="node n3">
+                <rect x="458" y="30" width="202" height="64" rx="4"></rect>
+                <text class="ttl" x="559" y="57" text-anchor="middle">pending_actions</text>
+                <text class="sub" x="559" y="76" text-anchor="middle">preview · audit row</text>
+              </g>
+              <g class="node n4">
+                <rect x="708" y="30" width="222" height="64" rx="4"></rect>
+                <text class="ttl" x="819" y="57" text-anchor="middle">human approves</text>
+                <text class="sub" x="819" y="76" text-anchor="middle">then, only then: execute</text>
+              </g>
+              <circle class="gatechip" cx="916" cy="22" r="5"></circle>
+              <g class="status">
+                <text class="s1" x="10" y="132">run · drafting a client status email from repo + tickets</text>
+                <text class="s2" x="10" y="132">run · action queued: send_report → waiting for approval</text>
+                <text class="s3" x="10" y="132">run · approved by human · executed · audit row written</text>
+              </g>
+            </g>
+          </svg>
+        </div>
       </div>
     </div>
-
-    <p class="availability">
-      Pakistan, UTC+5. A full working-day overlap with the EU, four hours with US East.
-      Open to relocation and to customer travel. Available as an employee, or on contract through my
-      consultancy. <a href="mailto:sparli@croncore.com">sparli@croncore.com</a>
-    </p>
-  </section>
-
-  <h2 class="section" id="shipped">Shipped</h2>
-  <p class="sub">
-    Each one starts with what went wrong, because that is the part worth reading. Most of this is
-    client work under NDA, so the write-ups describe architecture and outcomes rather than showing
-    source.
-  </p>
-
-  <ul class="shipped">
-    {
-      shipped.map((entry) => (
-        <li>
-          <a class="card" href={`/shipped/${entry.id}/`}>
-            <h3>{entry.data.title}</h3>
-            <p class="outcome" set:html={entry.data.outcome} />
-            <div class="tags">
-              <span class="tag">{entry.data.period}</span>
-              <span class="tag">{entry.data.context}</span>
-              <span class="tag evidence">
-                {entry.data.layer === "architecture" ? "designed it" : "built and ran it"}
-              </span>
-            </div>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-
-  <h2 class="section" id="how">How I work</h2>
-  <p class="sub">
-    Three positions I hold consistently enough that they show up in unrelated projects. Objections
-    to any of them are reasonable; these are the answers.
-  </p>
-
-  <div class="prose">
-    <p>
-      <b>Agents draft, humans release.</b> Every system I have built that can touch a customer holds
-      its side effects behind an explicit gate. In our delivery agent, writes land in a
-      <code>pending_actions</code> table and wait; there is no code path that emails a client
-      directly. I made the same call independently on a side project, where the terminal automated
-      state is <em>prepared</em> and <em>submitted</em> is a human attestation. The reason is not
-      caution. The failure is asymmetric and irreversible: you cannot recall a bad message to a
-      customer.
-    </p>
-    <p>
-      <b>Measure on the real path, not the benchmark.</b> I moved a production voice agent from one
-      model to another because response latency on live calls was too high, not because of a
-      leaderboard. The same instinct is why I stress-tested an inference platform to 200+ concurrent
-      users before release rather than after.
-    </p>
-    <p>
-      <b>Say what I did not do.</b> I build, integrate, deploy and operate these systems. I do not
-      train models, and where a project involved one I will tell you which part was mine. That
-      distinction costs me nothing and saves a conversation later.
-    </p>
   </div>
 
-  <h2 class="section" id="writing">Writing</h2>
-  <p class="sub">In progress. First pieces land here as they are finished.</p>
+  <section class="row" id="pattern">
+    <div class="frame">
+      <p class="lab"><b>01</b>The pattern</p>
+      <div>
+        <h2>Every system I build puts the irreversible action behind a human.</h2>
+        <p class="sub">
+          Not caution: asymmetry. You cannot recall a bad message to a customer, or unspend an ad
+          budget. I have made this call three times, in three unrelated domains, without anyone
+          asking me to.
+        </p>
+        <dl class="ledger">
+          <div>
+            <dt>Shurq</dt>
+            <dd>
+              The progressive autonomy ladder I designed: read-only, then approval on every write,
+              then earned autonomy under spend caps. Every action returns a preview requiring
+              <code>confirm_action</code>, fully audited.
+            </dd>
+            <span class="tag2">live ad spend</span>
+          </div>
+          <div>
+            <dt>Croncore</dt>
+            <dd>
+              The agent has no tool that sends. Proposed actions land in a
+              <code>pending_actions</code> row and wait. The send path does not exist rather than
+              being disabled.
+            </dd>
+            <span class="tag2">client email</span>
+          </div>
+          <div>
+            <dt>Side project</dt>
+            <dd>
+              The terminal automated state is <code>prepared</code>. <code>submitted</code> is a
+              human attestation, and nothing reaches it without one.
+            </dd>
+            <span class="tag2">applications</span>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
 
-  <div class="cta">
-    <p>
-      <b>Hiring for a forward-deployed or solutions role?</b> The fastest way to judge whether I am
-      useful to you is to send me a real integration problem you are dealing with, and I will tell
-      you how I would approach it.
-    </p>
-    <p><a href="mailto:sparli@croncore.com">sparli@croncore.com</a></p>
+  <section class="row" id="cases">
+    <div class="frame">
+      <p class="lab"><b>02</b>Case studies</p>
+      <div>
+        <h2>Three things that broke, and how they were found.</h2>
+        <p class="sub">
+          Client work under NDA, so these describe architecture and outcomes rather than source. The
+          frames below are engineered for screen recordings; until those are exported, each shows
+          the actual architecture, drawn and moving.
+        </p>
+
+        {
+          shipped.map((entry, i) => {
+            const h = home[entry.id];
+            return (
+              <article class="inc">
+                <div class="top">
+                  <span class="no">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{entry.data.title}</h3>
+                    <p class="ctx">
+                      {entry.data.context} · {entry.data.period}
+                    </p>
+                  </div>
+                </div>
+                <div class="body">
+                  <div>
+                    <p class="sum" set:html={h.sum} />
+                    <div class="outcome">
+                      <span class="k">{h.outcomeK}</span>
+                      <span class="v">{h.outcomeV}</span>
+                    </div>
+                    <a class="more" href={`/shipped/${entry.id}/`}>
+                      Read the full write-up
+                    </a>
+                  </div>
+                  {h.clip === "call" && (
+                    <figure>
+                      <div class="clip">
+                        <span class="badge">replay · what the caller experienced</span>
+                        <svg
+                          viewBox="0 0 620 150"
+                          role="img"
+                          aria-label="Animated call timeline: the call connects, carrier noise precedes the first turn, hello is transcribed as no, and the end-call rule fires around four seconds."
+                        >
+                          <line x1="30" y1="84" x2="590" y2="84" stroke="var(--d-line2)" stroke-width="2" />
+                          <g stroke="var(--d-line2)">
+                            <line x1="30" y1="76" x2="30" y2="92" />
+                            <line x1="200" y1="76" x2="200" y2="92" />
+                            <line x1="390" y1="76" x2="390" y2="92" />
+                            <line x1="560" y1="76" x2="560" y2="92" />
+                          </g>
+                          <circle class="pulse" cx="30" cy="84" r="6" />
+                          <g font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#a6abb5">
+                            <text x="30" y="64">connect</text>
+                            <text x="200" y="64">noise</text>
+                            <text x="390" y="64" fill="#e5a53a">&#8220;hello&#8221; → &#8220;no&#8221;</text>
+                            <text x="560" y="64" text-anchor="end">end-call</text>
+                          </g>
+                          <g class="hangup" font-family="ui-monospace,Menlo,monospace">
+                            <text x="560" y="118" text-anchor="end" font-size="11" fill="#e5a53a">call terminated · 00:04</text>
+                          </g>
+                          <text x="30" y="118" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="#767c88">0s</text>
+                        </svg>
+                      </div>
+                      <figcaption>recording slot · the drawn timeline is the real failure sequence</figcaption>
+                    </figure>
+                  )}
+                  {h.clip === "queue" && (
+                    <figure>
+                      <div class="clip">
+                        <span class="badge">replay · the approval queue</span>
+                        <svg
+                          viewBox="0 0 620 170"
+                          role="img"
+                          aria-label="Animated approval queue: a proposed action appears as a pending row, a human approves it, and it is marked executed."
+                        >
+                          <g font-family="ui-monospace,Menlo,monospace" font-size="11">
+                            <rect x="30" y="26" width="560" height="30" rx="3" fill="#14171c" stroke="#252932" />
+                            <text x="44" y="45" fill="#a6abb5">pending_actions</text>
+                            <text x="576" y="45" text-anchor="end" fill="#767c88">croncore/delivery</text>
+                            <g class="rowpulse">
+                              <rect x="30" y="66" width="560" height="34" rx="3" fill="#1a2547" stroke="#394050" />
+                              <text x="44" y="87" fill="#9eb1ff">draft: status report → client@…  ·  awaiting approval</text>
+                            </g>
+                            <g class="tick">
+                              <rect x="30" y="110" width="560" height="34" rx="3" fill="#10291d" stroke="#1f4a35" />
+                              <text x="44" y="131" fill="#3dd68c">✓ approved by human · executed · audit row written</text>
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+                      <figcaption>recording slot · the drawn queue is the real mechanism</figcaption>
+                    </figure>
+                  )}
+                  {!h.clip && h.sum2 && (
+                    <div>
+                      <p class="sum" set:html={h.sum2} />
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="row" id="flight">
+    <div class="frame">
+      <p class="lab"><b>03</b>In flight</p>
+      <div>
+        <h2>Designed, being built now.</h2>
+        <p class="sub">
+          Listed separately from shipped work on purpose. Neither has results yet, and a page
+          that blurs the two is not worth reading.
+        </p>
+        <dl class="ledger">
+          <div>
+            <dt>EduImmersion</dt>
+            <dd>
+              An orchestration layer for an education platform live with Québec school boards:
+              content, assessment and analytics agents around one shared learner record. I own the
+              architecture, wrote the specification the team builds from, and picked the team.
+            </dd>
+            <span class="tag2">architecture</span>
+          </div>
+          <div>
+            <dt>jobhunt-agent</dt>
+            <dd>
+              A job pipeline built to measure its own scorer: hand labels, chance-corrected
+              agreement, a measured human ceiling, baselines it has to beat. No results published yet.
+              Deliberately so, rather than placeholder numbers.
+              <a href="https://github.com/Sparli/jobhunt-agent">github.com/Sparli/jobhunt-agent</a>
+            </dd>
+            <span class="tag2">public repo</span>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="row" id="method">
+    <div class="frame">
+      <p class="lab"><b>04</b>Method</p>
+      <div>
+        <div class="pos">
+          <div>
+            <h3>Measure on the real path, not the benchmark</h3>
+            <p>
+              I moved a production voice agent between models because latency on live calls was
+              too high, not because of a leaderboard. Same instinct: stress-testing to 200+
+              concurrent users before release, not after.
+            </p>
+          </div>
+          <div>
+            <h3>The gate is architecture, not a prompt</h3>
+            <p>
+              A system prompt is a request. A missing code path is a guarantee. When the failure
+              is irreversible, I build the guarantee.
+            </p>
+          </div>
+          <div>
+            <h3>Compliance is part of the build</h3>
+            <p>
+              Dialling windows, DNC scrubbing, consent logging, CASL unsubscribe: built in-house,
+              per jurisdiction, because the penalty lands on the client&rsquo;s phone numbers.
+            </p>
+          </div>
+          <div>
+            <h3>Say what I did not do</h3>
+            <p>
+              I build, integrate, deploy and operate these systems. I do not train models, and
+              where a project involved one I will tell you which part was mine.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row" id="stack">
+    <div class="frame">
+      <p class="lab"><b>05</b>In production with</p>
+      <div>
+        <p class="stackline">
+          <b>Twilio</b> · <b>Asterisk/FreePBX</b> · <b>Deepgram</b> · <b>ElevenLabs</b> ·
+          <b>Pipedrive</b> · <b>ClickUp</b> · <b>GitHub</b> · <b>Gmail</b> ·
+          <b>Amazon Ads API</b> · <b>Meta Ads</b> · <b>Google Places</b> · <b>Stripe</b>.
+          Each wired up and debugged in production, not read about.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <div class="frame">
+      <p class="kicker"><b>06</b> · Colophon</p>
+      <h2>This site is built the way I build client systems.</h2>
+      <p class="sub">
+        The claims above are the kind that should be checkable, so the site itself is a small
+        demonstration. Every number below is enforced by a script that fails the build when it
+        regresses, including the animation above, which cost zero bytes of JavaScript.
+      </p>
+      <div class="meas">
+        <div>
+          <span class="v">0<i> B</i></span>
+          <span class="k">client JavaScript: a CI budget fails the build above zero</span>
+        </div>
+        <div>
+          <span class="v">0<i> req</i></span>
+          <span class="k">external requests: no fonts, no CDN, no analytics</span>
+        </div>
+        <div>
+          <span class="v">&lt;20<i> KB</i></span>
+          <span class="k">largest page, gzipped, styles inlined, budget-capped in CI</span>
+        </div>
+        <div>
+          <span class="v">5<i> widths</i></span>
+          <span class="k">overflow-checked in a real browser, 320 to 1280px</span>
+        </div>
+      </div>
+      <p class="fine">
+        Astro static · hand-written CSS · a content schema that refuses to build a case study
+        without an <i>evidence</i> field · CI actions pinned to commit SHAs · deployed through the
+        same gates it advertises. <a href="https://github.com/Sparli/sparli-dev">Read the source</a>.
+      </p>
+      <div class="cta2">
+        <a class="btn" href="mailto:sparli@croncore.com">sparli@croncore.com</a>
+        <span class="alt">
+          Hiring for a forward-deployed role? Send a real integration problem. Faster than a
+          screening call.
+        </span>
+      </div>
+    </div>
   </div>
 </Base>
