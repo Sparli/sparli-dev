@@ -1,0 +1,52 @@
+---
+title: "A language no vendor served, and a PBX that could not change"
+outcome: "Mongolian speech shipped into a live Asterisk/FreePBX call flow. <b>Nothing on the telephony side had to change</b>, because the serving stack matched the existing audio contract exactly."
+period: "2024"
+context: "Telephony, language services client"
+layer: delivery
+evidence: "The service ran in the client's production call flow. The audio contract it had to match is verifiable in the PBX configuration, and I can walk through the serving stack, the fallback logic and the interface line by line. What I cannot walk through is the model internals, because that was not my layer."
+stack: ["FastAPI", "Asterisk/FreePBX", "self-hosted speech engines"]
+order: 3
+---
+
+The client needed Mongolian speech inside a running call flow. Two constraints made it a real
+problem rather than a shopping trip.
+
+First, no commercial vendor offered the language. There was nothing to buy, at any price, from the
+providers a telephony stack would normally reach for.
+
+Second, the telephony side was a live Asterisk/FreePBX install serving real calls, and it was not
+going to be modified. Its audio contract was fixed: sample rate, encoding, timing. Whatever
+produced the speech had to match that contract exactly, because the alternative was changing a
+production phone system to accommodate a new dependency, which is the wrong direction for risk to
+flow.
+
+## What I built
+
+A self-hosted FastAPI service running two off-the-shelf speech engines behind one interface, with
+fallback between them.
+
+The single interface matters more than either engine. The PBX talks to one stable contract, and
+which engine actually produced the audio is a detail the telephony side never sees. When one
+engine misbehaved, the service fell back to the other and the call flow noticed nothing.
+
+The output matched the client's existing audio contract, so integration cost the telephony team
+nothing. That was the goal from the first conversation: the measure of success was that nothing on
+their side had to change.
+
+## Where my work stopped
+
+I built and operated the serving stack: the service, the interface, the fallback, the deployment,
+and the audio contract compliance. I did not train the speech models. The engines were
+off-the-shelf, and the model layer was not mine.
+
+That boundary is worth stating because it is exactly the question an interviewer should ask, and
+the answer costs nothing: the engineering value here was making an unsupported language work
+inside a production system that could not bend to meet it.
+
+## What I would do differently
+
+I would put a compliance check on the audio contract into the service's test suite from day one:
+generate a sample, assert the sample rate and encoding, fail the deploy on mismatch. We verified
+the contract by hand at integration time. A wrong assumption there would have surfaced as garbled
+audio on a live call, which is the worst possible place to discover it.
