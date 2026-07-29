@@ -22,6 +22,7 @@
  * ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
+  color-scheme: light;
   --bg: #fdfdfc;
   --paper: #f5f5f3;
   --line: #e4e4e0;
@@ -74,22 +75,11 @@
   --wide: var(--frame);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #131417;
-    --paper: #1a1c20;
-    --line: #292c31;
-    --line-strong: #3e4249;
-    --ink: #ecedef;
-    --muted: #b1b5bc;
-    --faint: #83878f;
-    --accent: #9eb1ff;
-    --accent-ghost: #1c2646;
-    --bad: #ffca16;
-    --good: #3dd68c;
-    --good-bg: #10291d;
-  }
-}
+/* No body dark mode, deliberately. The page is dark-BOOKENDED: the hero band
+ * and the colophon/footer are fixed dark plates, and the ledger between them
+ * is white in every condition. Letting the body follow prefers-color-scheme
+ * collapsed the design into one dark sheet for dark-mode users, which is how
+ * half the audience first saw it. color-scheme pins UA chrome to match. */
 
 *, *::before, *::after { box-sizing: border-box; }
 
