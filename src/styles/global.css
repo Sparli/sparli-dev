@@ -328,7 +328,11 @@ h2 {
 }
 .inc .no {
   font-family: var(--serif); font-style: italic; font-weight: 500;
-  font-size: var(--t-inum); line-height: 0.9; color: var(--line-strong);
+  /* 3.4:1 on bg. These are display-size, so the AA floor is 3.0, and
+   * aria-hidden does NOT exempt them: axe checks contrast for sighted
+   * low-vision readers, who see this text regardless of what screen
+   * readers skip. Borrowing --line-strong here measured 1.5:1. */
+  font-size: var(--t-inum); line-height: 0.9; color: #8b8c86;
   letter-spacing: -0.03em; padding-top: 4px; font-variant-numeric: normal;
 }
 .inc h3 {

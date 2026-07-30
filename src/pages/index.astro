@@ -218,7 +218,11 @@ for (const entry of shipped) {
                       <span class="k">{h.outcomeK}</span>
                       <span class="v">{h.outcomeV}</span>
                     </div>
-                    <a class="more" href={`/shipped/${entry.id}/`}>
+                    <a
+                      class="more"
+                      href={`/shipped/${entry.id}/`}
+                      aria-label={`Read the full write-up: ${entry.data.title}`}
+                    >
                       Read the full write-up
                     </a>
                   </div>
