@@ -29,7 +29,7 @@
   --line-strong: #cfcfc9;
   --ink: #1a1c20;
   --muted: #4b4f56;
-  --faint: #7c8087;
+  --faint: #63676e; /* 5.6:1 on bg, 5.2:1 on paper. AA floor is 4.5; the previous #7c8087 measured 3.9 and PageSpeed caught it. Do not lighten. */
   --accent: #3a56c4;
   --accent-ghost: #eef1fb;
   --bad: #9c5700;
@@ -43,7 +43,7 @@
   --d-line2: #394050;
   --d-ink: #eef0f3;
   --d-muted: #a6abb5;
-  --d-faint: #767c88;
+  --d-faint: #8b919d; /* 6.1:1 on d-bg, 5.7:1 on d-panel. Previous value sat at 4.3 on panels. */
   --d-accent: #9eb1ff;
   --d-good: #3dd68c;
   --d-bad: #e5a53a;
@@ -314,7 +314,10 @@ h2 {
   font-family: var(--mono); font-size: 0.88em; background: var(--paper);
   padding: 1px 5px; border-radius: 3px; color: var(--ink);
 }
-.ledger .tag2 { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); white-space: nowrap; }
+/* the tag is a second <dd>, not a <span>: a <div> inside <dl> may contain
+ * only dt/dd elements, and axe's dl-structure audit rightly flags anything
+ * else. Same rendering, valid document. */
+.ledger dd.tag2 { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); white-space: nowrap; max-width: none; }
 
 /* ---------- case studies on the home page ---------- */
 .inc { padding: var(--s7) 0 var(--s6); }
