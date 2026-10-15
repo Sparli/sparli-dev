@@ -527,3 +527,39 @@ h2.section + .sub { margin: 10px 0 18px; }
 }
 .cta p { margin: 0 0 6px; }
 .cta a { color: var(--accent); font-weight: 600; }
+
+/* ---------- architecture diagrams (components/Diagram.astro) ----------
+ * Same dark world as the hero, so a diagram on a case study reads as part of
+ * the same family. Drawn at 1000 units wide; below ~640px the frame scrolls
+ * rather than shrinking the text past legibility. */
+.dgm { margin: var(--s6) 0; }
+.dgm-frame {
+  position: relative; background: var(--d-bg); border: 1px solid var(--line-strong);
+  padding: 44px 20px 20px; overflow-x: auto;
+}
+.dgm-frame:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dgm-badge {
+  position: absolute; top: 10px; left: 10px;
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.06em;
+  color: var(--d-muted); border: 1px solid var(--d-line); padding: 3px 8px;
+}
+.dg { display: block; width: 100%; height: auto; min-width: 640px; font-family: var(--mono); }
+.dg .box rect { fill: var(--d-panel); stroke: var(--d-line2); stroke-width: 1.2; }
+.dg .box.mine rect { stroke: var(--d-accent); }
+.dg .box.bad rect { stroke: var(--d-bad); }
+.dg .box.good rect { stroke: var(--d-good); }
+.dg .t { font-size: 14px; fill: var(--d-ink); }
+.dg .s { font-size: 11.5px; fill: var(--d-faint); }
+.dg .lbl { font-size: 11px; letter-spacing: 0.08em; fill: var(--d-muted); }
+.dg .lbl.mine { fill: var(--d-accent); }
+.dg .lbl.bad, .dg .s.bad { fill: var(--d-bad); }
+.dg .lbl.good, .dg .s.good { fill: var(--d-good); }
+.dg .ln { stroke: var(--d-line2); stroke-width: 1.5; fill: none; }
+.dg .ln.bad { stroke: var(--d-bad); }
+.dg .ln.good { stroke: var(--d-good); }
+.dg .ln.mine { stroke: var(--d-accent); }
+.dg .wire { stroke-dasharray: 5 9; animation: flowdash 1.15s linear infinite; }
+.dg .encl { fill: none; stroke: var(--d-line2); stroke-dasharray: 3 5; }
+/* product screenshots: real UI, so a plain hairline frame and nothing else */
+.shot { margin: var(--s6) 0 0; }
+.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line-strong); border-radius: 4px; }

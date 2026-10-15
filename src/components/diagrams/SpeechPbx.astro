@@ -1,0 +1,36 @@
+---
+import Diagram from "../Diagram.astro";
+import Box from "./Box.astro";
+---
+
+<Diagram
+  label="Diagram: the speech service between the phone system and the engines"
+  badge="architecture"
+  caption="drawn from the real deployment · the boundary of my work is marked"
+>
+  <svg
+    class="dg"
+    viewBox="0 0 1000 290"
+    role="img"
+    aria-label="The client's Asterisk FreePBX system, which could not change, talks to one FastAPI service over a fixed audio contract. The service, which I built and operated, calls engine A and falls back to engine B on failure. Both engines are off-the-shelf models, not my layer."
+  >
+    <Box x={0} y={95} w={190} title="Asterisk/FreePBX" sub="live calls" />
+    <Box x={330} y={95} w={230} title="FastAPI service" sub="one stable interface" tone="mine" />
+    <Box x={640} y={30} w={200} title="engine A" sub="off-the-shelf" />
+    <Box x={640} y={160} w={200} title="engine B" sub="fallback" />
+    <path class="ln wire" d="M190 125 H330" />
+    <text class="s" x="260" y="112" text-anchor="middle">fixed audio</text>
+    <text class="s" x="260" y="146" text-anchor="middle">rate, encoding,</text>
+    <text class="s" x="260" y="162" text-anchor="middle">timing</text>
+    <path class="ln wire" d="M560 115 C 600 115, 600 60, 640 60" />
+    <path class="ln bad" stroke-dasharray="4 6" d="M560 135 C 600 135, 600 190, 640 190" />
+    <text class="s bad" x="862" y="194">on failure</text>
+
+    <line class="ln" x1="0" y1="248" x2="190" y2="248"></line>
+    <text class="lbl" x="0" y="270">CLIENT · COULD NOT CHANGE</text>
+    <line class="ln mine" x1="330" y1="248" x2="560" y2="248"></line>
+    <text class="lbl mine" x="330" y="270">MY LAYER · SERVICE, FALLBACK, DEPLOY</text>
+    <line class="ln" x1="640" y1="248" x2="840" y2="248"></line>
+    <text class="lbl" x="640" y="270">THE MODELS · NOT MINE</text>
+  </svg>
+</Diagram>

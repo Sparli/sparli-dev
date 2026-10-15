@@ -1,0 +1,45 @@
+---
+import Diagram from "../Diagram.astro";
+import Box from "./Box.astro";
+// Five columns, 171 wide with 36 between, so both lanes line up stage for stage.
+const X = [0, 207, 414, 621, 828];
+const W = 171;
+---
+
+<Diagram
+  label="Diagram: the hang-up before and after the fix"
+  badge="before · after"
+  caption="drawn from the real call flow · no client data"
+>
+  <svg
+    class="dg"
+    viewBox="0 0 1000 300"
+    role="img"
+    aria-label="Before: the caller answers with noise then hello, speech-to-text hears no on the first turn, the end-call rule fires, and the call ends at four seconds. After: noise before the caller speaks is skipped, an end-call intent on the first turn is treated as low confidence, and the conversation continues."
+  >
+    <text class="lbl bad" x="0" y="14">BEFORE · TWO CORRECT PARTS, ONE WRONG RESULT</text>
+    <Box x={X[0]} y={30} w={W} title="caller answers" sub="noise, then “hello”" />
+    <Box x={X[1]} y={30} w={W} title="speech-to-text" sub="noisy first packet" />
+    <Box x={X[2]} y={30} w={W} title="turn 1: “no”" sub="misheard" tone="bad" />
+    <Box x={X[3]} y={30} w={W} title="end-call rule" sub="caller said no → end" />
+    <Box x={X[4]} y={30} w={W} title="call ends · 00:04" sub="unrecoverable" tone="bad" />
+    <path class="ln wire" d="M171 60 H207" />
+    <path class="ln wire" d="M378 60 H414" />
+    <path class="ln bad wire" d="M585 60 H621" />
+    <path class="ln bad wire" d="M792 60 H828" />
+
+    <text class="lbl good" x="0" y="148">AFTER · THREE RULES, ORDER MATTERS</text>
+    <Box x={X[0]} y={164} w={W} title="caller answers" sub="noise, then “hello”" />
+    <Box x={X[1]} y={164} w={W} title="skip_turn" sub="noise is not a turn" tone="good" />
+    <Box x={X[2]} y={164} w={W} title="speech-to-text" sub="may still mishear" />
+    <Box x={X[3]} y={164} w={W} title="never end on turn 1" sub="low-confidence intent" tone="good" />
+    <Box x={X[4]} y={164} w={W} title="call continues" sub="graceful close only" tone="good" />
+    <path class="ln wire" d="M171 194 H207" />
+    <path class="ln wire" d="M378 194 H414" />
+    <path class="ln wire" d="M585 194 H621" />
+    <path class="ln good wire" d="M792 194 H828" />
+
+    <text class="s" x="0" y="268">Rule 2 is not a speech fix. It accepts that transcription will sometimes be wrong,</text>
+    <text class="s" x="0" y="286">and that hanging up on someone who wanted to talk costs far more than one extra turn.</text>
+  </svg>
+</Diagram>

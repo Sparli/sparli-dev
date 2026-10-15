@@ -1,0 +1,43 @@
+---
+import Diagram from "../Diagram.astro";
+import Box from "./Box.astro";
+---
+
+<Diagram
+  label="Diagram: Shurq's data and AI layer"
+  badge="shurq · architecture"
+  caption="drawn from the live product · outlined in blue: the parts I own or led"
+>
+  <svg
+    class="dg"
+    viewBox="0 0 1000 300"
+    role="img"
+    aria-label="Data row: Amazon's Selling Partner and Ads APIs feed an hourly pipeline I own, which produces per-product profit data that every dashboard and alert reads. Action row: Claude, ChatGPT and Cursor connect with scoped keys to the MCP server I led, which reads the profit data. The AI Ad Manager I led proposes changes through rules and AI employees, and an approval queue logs every change and keeps it reversible before anything writes to a live ad account."
+  >
+    <text class="lbl" x="0" y="14">DATA</text>
+    <Box x={0} y={28} w={180} title="Amazon APIs" sub="SP-API · Ads API" />
+    <Box x={230} y={28} w={220} title="hourly pipeline" sub="sales · fees · ads" tone="mine" />
+    <Box x={500} y={28} w={220} title="profit data" sub="per product · 21 markets" />
+    <Box x={770} y={28} w={230} title="dashboards · alerts" sub="every number in the app" />
+    <path class="ln wire" d="M180 58 H230" />
+    <path class="ln wire" d="M450 58 H500" />
+    <path class="ln wire" d="M720 58 H770" />
+
+    <text class="lbl" x="0" y="150">ACTION</text>
+    <Box x={0} y={164} w={180} title="Claude · ChatGPT" sub="Cursor · scoped keys" />
+    <Box x={230} y={164} w={220} title="MCP server" sub="1,080 tools · 29 write" tone="mine" />
+    <Box x={500} y={164} w={220} title="AI Ad Manager" sub="rules · AI employees" tone="mine" />
+    <Box x={770} y={164} w={230} title="approval queue" sub="logged · reversible" tone="good" />
+    <path class="ln wire" d="M180 194 H230" />
+    <path class="ln wire" d="M450 194 H500" />
+    <path class="ln wire" d="M720 194 H770" />
+    <path class="ln wire" d="M610 88 V164" />
+    <path class="ln wire" d="M560 88 C 560 128, 340 124, 340 164" />
+    <text class="s" x="632" y="130">both read the same profit data</text>
+
+    <text class="s good" x="770" y="250">only then: bid, budget and</text>
+    <text class="s good" x="770" y="266">keyword writes go live</text>
+    <text class="s" x="0" y="250">200+ concurrent users · 10+ person team</text>
+    <text class="s" x="0" y="266">joined at idea stage, July 2022</text>
+  </svg>
+</Diagram>

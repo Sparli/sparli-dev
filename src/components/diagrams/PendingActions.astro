@@ -1,0 +1,46 @@
+---
+import Diagram from "../Diagram.astro";
+import Box from "./Box.astro";
+---
+
+<Diagram
+  label="Diagram: how the agent's actions reach client systems"
+  badge="architecture"
+  caption="drawn from the real system · no client code or data"
+>
+  <svg
+    class="dg"
+    viewBox="0 0 1000 360"
+    role="img"
+    aria-label="One run is scoped to one project. The agent reads client systems through read-only tools. Its only write tool, propose_action, writes a row to pending_actions. A human approves the row, and only then does an executor act on the client systems and write an audit row. There is no direct path from the agent to sending."
+  >
+    <rect class="encl" x="1" y="1" width="998" height="300" rx="6"></rect>
+    <text class="lbl" x="18" y="24">ONE RUN = ONE project_id · CONTEXT CANNOT CROSS CLIENTS</text>
+
+    <Box x={20} y={44} w={170} title="run starts" sub="schedule, or local" />
+    <Box x={240} y={44} w={230} title="agent" sub="Messages API · Agent SDK" tone="mine" />
+    <Box x={520} y={44} w={220} title="read tools" sub="GitHub · ClickUp · Gmail" />
+    <Box x={790} y={44} w={190} title="client systems" sub="inbox · tasks · repos" />
+    <path class="ln wire" d="M190 74 H240" />
+    <path class="ln wire" d="M470 74 H520" />
+    <path class="ln wire" d="M740 74 H790" />
+    <text class="s" x="765" y="34" text-anchor="middle">read only</text>
+
+    <!-- The path that does not exist. Drawn so its absence is the point. -->
+    <path class="ln bad" stroke-dasharray="4 6" d="M470 104 Q 630 160 790 104" />
+    <text class="lbl bad" x="630" y="160" text-anchor="middle">✕ NO SEND TOOL EXISTS</text>
+
+    <Box x={240} y={196} w={230} title="propose_action" sub="the only write tool" />
+    <Box x={520} y={196} w={220} title="pending_actions" sub="what · to whom · the text" tone="mine" />
+    <Box x={790} y={196} w={190} title="human approves" sub="reads every row" tone="good" />
+    <path class="ln wire" d="M355 104 V196" />
+    <path class="ln wire" d="M470 226 H520" />
+    <path class="ln wire" d="M740 226 H790" />
+    <path class="ln good wire" d="M885 196 V104" />
+    <text class="s good" x="895" y="160">executor</text>
+    <text class="s good" x="895" y="176">+ audit row</text>
+
+    <text class="s" x="0" y="330">Worst case with a prompt guard: a wrong email reaches a customer.</text>
+    <text class="s" x="0" y="348">Worst case here: a badly worded row that a human reads and rejects.</text>
+  </svg>
+</Diagram>

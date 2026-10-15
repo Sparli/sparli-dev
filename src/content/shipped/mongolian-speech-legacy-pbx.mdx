@@ -9,6 +9,9 @@ stack: ["FastAPI", "Asterisk/FreePBX", "self-hosted speech engines"]
 order: 3
 ---
 
+import SpeechPbx from "../../components/diagrams/SpeechPbx.astro";
+
+
 The client needed Mongolian speech inside a running call flow. Two constraints made it a real
 problem rather than a shopping trip.
 
@@ -33,6 +36,8 @@ engine misbehaved, the service fell back to the other and the call flow noticed 
 The output matched the client's existing audio contract, so integration cost the telephony team
 nothing. That was the goal from the first conversation: the measure of success was that nothing on
 their side had to change.
+
+<SpeechPbx />
 
 ## Where my work stopped
 

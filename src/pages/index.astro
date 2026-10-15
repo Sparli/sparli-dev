@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
+import ShurqDiagram from "../components/diagrams/Shurq.astro";
 
 // Sorted by an explicit `order` rather than by date. The first entry is the one
 // I most want read, and that is an editorial decision, not a chronological one.
@@ -354,6 +355,21 @@ for (const entry of shipped) {
             <dd class="tag2">public repo</dd>
           </div>
         </dl>
+        <ShurqDiagram />
+        <figure class="shot">
+          <img
+            src="/shots/shurq-ai-employees.webp"
+            width="1100"
+            height="708"
+            loading="lazy"
+            decoding="async"
+            alt="Shurq's AI Workforce screen. An AI employee card for the COO agent, Cortex, shows a trust score out of 100 and three autonomy modes, Observe, Co-pilot and Autopilot. A note says it auto-acts only on Autopilot, with trust of at least 70 and three positive measured outcomes."
+          />
+          <figcaption>
+            shurq staging · the AI employees that run on the MCP tool layer: they act alone only on
+            Autopilot, at trust ≥ 70 · account names blurred
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
