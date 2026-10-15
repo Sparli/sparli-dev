@@ -1,0 +1,27 @@
+---
+/**
+ * A dark frame for an architecture diagram, shared by the case studies and the
+ * home page so every drawing reads as one family.
+ *
+ * The frame is focusable because on a phone the drawing is wider than the
+ * screen and scrolls sideways; a keyboard user has to be able to reach the part
+ * that is off screen (WCAG 2.1.1, axe: scrollable-region-focusable).
+ */
+interface Props {
+  /** Short name for the scroll region, read by screen readers. */
+  label: string;
+  /** Mono badge in the corner, e.g. "architecture". */
+  badge: string;
+  /** One honest line under the frame about what the drawing is. */
+  caption: string;
+}
+const { label, badge, caption } = Astro.props;
+---
+
+<figure class="dgm">
+  <div class="dgm-frame" tabindex="0" role="region" aria-label={label}>
+    <span class="dgm-badge">{badge}</span>
+    <slot />
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
