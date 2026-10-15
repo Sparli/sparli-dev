@@ -561,5 +561,8 @@ h2.section + .sub { margin: 10px 0 18px; }
 .dg .wire { stroke-dasharray: 5 9; animation: flowdash 1.15s linear infinite; }
 .dg .encl { fill: none; stroke: var(--d-line2); stroke-dasharray: 3 5; }
 /* product screenshots: real UI, so a plain hairline frame and nothing else */
-.shot { margin: var(--s6) 0 0; }
+/* Stacked full width on purpose: side by side, real UI shrinks past the point
+ * where a reader can see what the screen says, which defeats showing it. */
+.shots { display: grid; gap: var(--s6); margin: var(--s6) 0 0; }
+.shot { margin: 0; }
 .shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line-strong); border-radius: 4px; }
