@@ -101,8 +101,17 @@ for (const entry of shipped) {
         <div class="flowhead">
           <p>How my agents run in production</p>
           <p class="live">live loop · css only, zero js</p>
+          <!-- WCAG 2.2.2: anything that moves for more than five seconds needs a
+               way to stop it. A checkbox plus :has() pauses every animation on
+               the page with no script, so the zero-JS budget still holds. -->
+          <label class="pausectl">
+            <input type="checkbox" id="motion-pause" />
+            <span>pause animation</span>
+          </label>
         </div>
-        <div class="flowviz">
+        <!-- Focusable because it scrolls sideways on a phone: a keyboard user
+             has to be able to reach the part of the diagram that is off screen. -->
+        <div class="flowviz" tabindex="0" role="region" aria-label="Agent pipeline diagram">
           <svg
             viewBox="0 0 940 150"
             role="img"
