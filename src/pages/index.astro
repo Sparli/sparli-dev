@@ -11,7 +11,7 @@ const shipped = (await getCollection("shipped", ({ data }) => !data.draft)).sort
 );
 
 // Real product screens, staging, with account names and seller figures blurred.
-const screens: Slide[] = [
+const shurqScreens: Slide[] = [
   {
     src: "/shots/shurq-workflows.webp", w: 1100, h: 548,
     alt: "Shurq's Ad Manager workflows screen, with an approval queue tab, a note that every write step asks the user first, and starter templates such as Bid Guardrails, ACOS ladder and Pause bleeders.",
@@ -32,10 +32,41 @@ const screens: Slide[] = [
     alt: "The Shurq Data API reference, with an endpoint list, a Copy OpenAPI spec button and version notes.",
     cap: "shurq · the partner Data API, versioned with its own changelog",
   },
+];
+
+// The learning platform's client has asked not to be named yet, so it is
+// described by what it is. Logos and names in these screens are blurred, and
+// the pilot dashboards run on demo data.
+const learningScreens: Slide[] = [
   {
-    src: "/shots/eduimmersion-network.webp", w: 1100, h: 744,
-    alt: "EduImmersion's school-network dashboard for a school service centre in Montreal, showing totals for schools, teachers and students and a table of schools with attendance, assignment and quiz averages.",
-    cap: "eduimmersion pilot · school-network dashboard, EN/FR, demo data",
+    src: "/shots/learn-dashboard-fr.webp", w: 1100, h: 527,
+    alt: "The learner dashboard in French: streak, XP, level, weekly goal, quiz submission and accuracy rates, and shortcuts to generate content, browse it and rate it.",
+    cap: "learner app · dashboard in French: progress, streaks and AI generation in one place",
+  },
+  {
+    src: "/shots/learn-library.webp", w: 1100, h: 527,
+    alt: "The learner's content library: generated units across citizenship, science, maths and music, each with a lesson, a quiz and a reflection, in English or French.",
+    cap: "learner app · every generated topic becomes a lesson, a quiz and a reflection",
+  },
+  {
+    src: "/shots/learn-lesson.webp", w: 1000, h: 890,
+    alt: "A generated secondary-level lesson on chemical reactions, with sections on core concepts and reaction types, and a PDF download.",
+    cap: "learner app · a generated lesson, pitched to grade level, downloadable as PDF",
+  },
+  {
+    src: "/shots/learn-quiz.webp", w: 1000, h: 890,
+    alt: "A generated multiple-choice quiz on chemical reactions with six questions and four options each.",
+    cap: "learner app · the matching quiz, generated from the same lesson",
+  },
+  {
+    src: "/shots/learn-teacher-class.webp", w: 1100, h: 744,
+    alt: "A teacher's class view with tabs for students, attendance, notes, assignments, quizzes and grades, listing each student's attendance, quiz submission and score.",
+    cap: "school dashboards · a teacher's class view, demo data",
+  },
+  {
+    src: "/shots/learn-network.webp", w: 1100, h: 744,
+    alt: "A school service centre's network dashboard with totals for schools, teachers and students and a table of schools with attendance, assignment and quiz averages.",
+    cap: "school dashboards · the school-network view for a service centre, demo data",
   },
 ];
 
@@ -112,14 +143,14 @@ for (const entry of shipped) {
           <p class="facts">
             <span><b>7y</b> client-side delivery</span>
             <span>clients in <b>US · CA · UK · Gulf</b></span>
-            <span><b>UTC+5</b> · remote or relocation</span>
+            <span><b>remote</b> or relocation</span>
           </p>
         </div>
         <div class="portrait">
           <img src="/portrait.jpg" alt="Sparli Aman" width="450" height="600" />
           <div class="tint"></div>
           <div class="fade"></div>
-          <span class="sig">sparli aman · pakistan → everywhere</span>
+          <span class="sig">sparli aman · remote or relocation</span>
         </div>
       </div>
     </header>
@@ -364,7 +395,7 @@ for (const entry of shipped) {
             <dd class="tag2">lead engineer</dd>
           </div>
           <div>
-            <dt>EduImmersion</dt>
+            <dt>Learning platform</dt>
             <dd>
               Took a Québec EdTech client from raw requirements to two products, now in pilot: a
               learner platform that generates lessons and quizzes by grade, language and pace (with
@@ -385,9 +416,22 @@ for (const entry of shipped) {
             <dd class="tag2">public repo</dd>
           </div>
         </dl>
-        <ShurqDiagram />
-        <Carousel label="Product screens from Shurq and EduImmersion" slides={screens} />
-        <p class="deeper"><a href="/shurq/">The Shurq work in depth, area by area</a></p>
+        <div class="prod" id="shurq">
+          <h3>Shurq</h3>
+          <p class="prod-sub">The data and AI layer of a paid Amazon-analytics SaaS.</p>
+          <ShurqDiagram />
+          <Carousel label="Shurq product screens" slides={shurqScreens} />
+          <p class="deeper"><a href="/shurq/">The Shurq work in depth, area by area</a></p>
+        </div>
+        <div class="prod" id="learning">
+          <h3>Bilingual AI learning platform</h3>
+          <p class="prod-sub">
+            Québec EdTech client, in pilot. A learner app that generates lessons, quizzes and
+            reflections, and role-based dashboards for school networks, schools, teachers and
+            parents. Client name withheld at their request.
+          </p>
+          <Carousel label="Learning platform screens" slides={learningScreens} />
+        </div>
       </div>
     </div>
   </section>

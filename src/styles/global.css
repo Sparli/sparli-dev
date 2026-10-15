@@ -603,3 +603,8 @@ h2.section + .sub { margin: 10px 0 18px; }
 }
 .deeper { margin: var(--s4) 0 0; font-size: var(--t-meta); font-weight: 650; }
 .deeper a::after { content: "\00a0\2192"; }
+/* one block per product under the Products ledger */
+.prod { margin-top: var(--s7); padding-top: var(--s6); border-top: 1px solid var(--line); }
+.prod h3 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.3rem, 1.15rem + 0.7vw, 1.65rem); margin: 0 0 var(--s2); }
+.prod-sub { margin: 0; font-size: var(--t-small); color: var(--muted); max-width: 60ch; line-height: 1.55; }
+.prod .dgm { margin-top: var(--s5); }
