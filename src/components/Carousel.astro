@@ -1,0 +1,39 @@
+---
+/**
+ * A screenshot carousel with no JavaScript.
+ *
+ * Built on CSS scroll-snap: a horizontal strip where the next slide peeks in
+ * from the edge, so it reads as "there is more" without a single control. It
+ * works with touch, trackpad and the keyboard (the strip is focusable, and the
+ * arrow keys scroll it). Browsers that support CSS scroll buttons and markers
+ * also get arrows and dots; the rest get a swipeable strip, which is the same
+ * pattern most product pages use on phones anyway. The site's zero-JS budget
+ * is the reason for this choice over a script-driven slider.
+ */
+export type Slide = { src: string; w: number; h: number; alt: string; cap: string };
+interface Props {
+  /** Read by screen readers when the strip takes focus. */
+  label: string;
+  slides: Slide[];
+}
+const { label, slides } = Astro.props;
+---
+
+<div class:list={["car", { single: slides.length === 1 }]}>
+  <div class="car-track" tabindex="0" role="region" aria-label={`${label}: ${slides.length} screens, scroll sideways`}>
+    {
+      slides.map((s, i) => (
+        <figure class="car-slide" aria-label={`${i + 1} of ${slides.length}`}>
+          <img src={s.src} width={s.w} height={s.h} loading="lazy" decoding="async" alt={s.alt} />
+          <figcaption>
+            <span class="car-n">
+              {i + 1}/{slides.length}
+            </span>
+            {s.cap}
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+  {slides.length > 1 && <p class="car-hint" aria-hidden="true">swipe or scroll for more →</p>}
+</div>

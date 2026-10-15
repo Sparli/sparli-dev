@@ -560,9 +560,46 @@ h2.section + .sub { margin: 10px 0 18px; }
 .dg .ln.mine { stroke: var(--d-accent); }
 .dg .wire { stroke-dasharray: 5 9; animation: flowdash 1.15s linear infinite; }
 .dg .encl { fill: none; stroke: var(--d-line2); stroke-dasharray: 3 5; }
-/* product screenshots: real UI, so a plain hairline frame and nothing else */
-/* Stacked full width on purpose: side by side, real UI shrinks past the point
- * where a reader can see what the screen says, which defeats showing it. */
-.shots { display: grid; gap: var(--s6); margin: var(--s6) 0 0; }
-.shot { margin: 0; }
-.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line-strong); border-radius: 4px; }
+
+/* ---------- screenshot carousel (components/Carousel.astro) ---------- */
+.car { margin: var(--s6) 0 0; }
+.car-track {
+  display: flex; gap: var(--s4); overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding: 0 2px; padding: 2px 2px var(--s3);
+  scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+}
+.car-track:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* 88% so the next slide always peeks in: the affordance that there is more. */
+.car-slide { flex: 0 0 88%; margin: 0; scroll-snap-align: start; }
+.car-track > .car-slide:only-child { flex-basis: 100%; }
+.car-slide img {
+  display: block; width: 100%; height: auto; aspect-ratio: auto;
+  max-height: 460px; object-fit: cover; object-position: top left;
+  border: 1px solid var(--line-strong); border-radius: 4px; background: var(--paper);
+}
+.car-slide figcaption { display: flex; gap: var(--s2); }
+.car-n { color: var(--accent); font-weight: 700; white-space: nowrap; }
+.car-hint { margin: var(--s1) 0 0; font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); text-align: right; }
+@media (prefers-reduced-motion: no-preference) { .car-track { scroll-behavior: smooth; } }
+/* Progressive enhancement: arrows and dots where CSS carousels are supported
+ * (Chromium 135+). Elsewhere these rules are ignored and the strip still works. */
+@supports selector(::scroll-button(right)) {
+  .car { position: relative; }
+  .car-track { anchor-name: --car; scroll-marker-group: after; }
+  .car-track::scroll-button(left), .car-track::scroll-button(right) {
+    position: absolute; position-anchor: --car; top: calc(anchor(center) - 20px);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink);
+    font-size: 16px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .car-track::scroll-button(left) { content: "←" / "Previous screen"; left: calc(anchor(left) + 8px); }
+  .car-track::scroll-button(right) { content: "→" / "Next screen"; right: calc(anchor(right) + 8px); }
+  .car-track::scroll-button(*):disabled { opacity: 0; pointer-events: none; }
+  .car-track::scroll-marker-group { display: flex; justify-content: center; gap: 8px; margin-top: var(--s2); }
+  .car-slide::scroll-marker { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+  .car-slide::scroll-marker:target-current { background: var(--accent); }
+  .car-hint { display: none; }
+  .car.single .car-track { scroll-marker-group: none; }
+}
+.deeper { margin: var(--s4) 0 0; font-size: var(--t-meta); font-weight: 650; }
+.deeper a::after { content: "\00a0\2192"; }
