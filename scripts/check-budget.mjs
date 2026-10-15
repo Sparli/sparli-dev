@@ -48,7 +48,11 @@ const BUDGET = {
   // page before it should have been split.
   htmlBytesGzip: 20 * 1024,
   // Total shipped weight. Catches the day somebody adds a 2MB hero photograph.
-  totalBytes: 700 * 1024,
+  // Raised from 700 KB on 2026-10-15 for eleven real product screenshots
+  // (20-70 KB webp each). They are the evidence the site exists to show, and
+  // every one is loading="lazy" inside a carousel, so first-paint weight did
+  // not move. A new screenshot over ~80 KB should be recompressed, not waved in.
+  totalBytes: 1000 * 1024,
 };
 
 /**
