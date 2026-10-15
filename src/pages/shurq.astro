@@ -1,0 +1,283 @@
+---
+import Base from "../layouts/Base.astro";
+import ShurqDiagram from "../components/diagrams/Shurq.astro";
+import Carousel, { type Slide } from "../components/Carousel.astro";
+
+// One page for the one product I have worked on longest. It is organised by
+// the areas I own or led, not by the product's menu, because the question a
+// reader is asking is "what did he do", not "what does Shurq do". Every
+// screenshot is from staging with account names and seller figures blurred.
+
+const facts = [
+  ["21", "Amazon marketplaces"],
+  ["200+", "concurrent users"],
+  ["10+", "person team"],
+  ["660+", "logged changes, v2.77"],
+];
+
+type Area = { id: string; tag: string; title: string; lede: string; points: string[]; shots: Slide[] };
+
+const areas: Area[] = [
+  {
+    id: "pipeline",
+    tag: "owner",
+    title: "The data pipeline everything else reads from",
+    lede: "Every hour it pulls sales, fees and advertising data from Amazon's Selling Partner and Ads APIs across 21 marketplaces and turns it into true per-product profit. Every dashboard, alert, report and AI agent in the product reads the same numbers, so a mistake here is a mistake everywhere.",
+    points: [
+      "A ratio with nothing to divide by shows a dash, never 0%. A campaign that spent with no sales must not look like the healthiest one in the table.",
+      "A day loaded before it was complete reloads when it is opened again, so a half-finished day never reads as a drop in sales.",
+      "Amounts from other marketplaces convert into the header currency, and returns counted in a region are counted once, not twice.",
+    ],
+    shots: [],
+  },
+  {
+    id: "ai",
+    tag: "led",
+    title: "Shurq AI: ask your Amazon data a question",
+    lede: "A chat assistant that answers questions about sales, ads and profit with tables and charts built from the seller's own data, and produces reports as PDF or PowerPoint. The same assistant answers by text or voice in the iPhone app.",
+    points: [
+      "Reads an uploaded file's real columns and text, and when an answer names a column the file does not have, the real column list is added to the reply.",
+      "Answers stream at an even pace, and if the connection drops mid-answer it reconnects and carries on with the same answer instead of starting over.",
+      "Scheduled briefs and anomaly alerts in the marketplace's own currency. Seller data stays on infrastructure Shurq runs.",
+    ],
+    shots: [
+      {
+        src: "/shots/shurq-chat.webp",
+        w: 1100,
+        h: 503,
+        alt: "Shurq AI's chat screen: an input for questions about Amazon data, a choice of AI employee to ask, voice input, and a note that the seller's data stays on infrastructure Shurq owns.",
+        cap: "shurq AI · suggested questions blurred because they quote the seller's real figures",
+      },
+    ],
+  },
+  {
+    id: "api",
+    tag: "led",
+    title: "The MCP server and the Data API",
+    lede: "Two ways for software outside Shurq to use it. The MCP server exposes 1,080 tools, 29 of them write actions, over streamable HTTP with scoped API keys, so a seller can query and act on their live Amazon account from Claude, ChatGPT, Cursor or Claude Code. The Data API gives partners keyword, product and rank data over REST.",
+    points: [
+      "Changes made through MCP land in the same changelog as everything else and can be undone from it, with a summary of what will go back before anything is sent.",
+      "Long requests return 202 and a job id to poll rather than holding a connection open, and every value carries its source and date.",
+      "Versioned, with its own changelog and an OpenAPI spec. It publishes its own accuracy: the competitor sales estimate has a median error of about 10%, down from 19%.",
+    ],
+    shots: [
+      {
+        src: "/shots/shurq-data-api.webp",
+        w: 1100,
+        h: 775,
+        alt: "The Shurq Data API reference: an endpoint list for keyword volume, keyword gaps and rank data, a Copy OpenAPI spec button, and version notes describing cursor paging, background jobs and estimate accuracy.",
+        cap: "shurq data API · the partner reference, versioned with its own changelog",
+      },
+    ],
+  },
+  {
+    id: "ads",
+    tag: "led",
+    title: "The AI Ad Manager and the AI employees",
+    lede: "Rules, scheduled workflows and AI employees that change bids, budgets and keywords on live ad accounts. Live ad spend is money that cannot be taken back, so the whole design is about who is allowed to act, and how a change is undone.",
+    points: [
+      "Every write step asks first, through an approval queue. Every kind of change can be undone: budgets, pauses and bids go back, anything created is paused rather than deleted, and a change Amazon makes permanent says so before you try.",
+      "AI employees start in Observe. One set to Autopilot acts alone only with a trust score of 70 or more and three positive measured outcomes, checked again before every change.",
+      "When the Bid Optimizer moves bids, its note starts with why, such as high ACOS or a winner raised, not with counts and averages.",
+    ],
+    shots: [
+      {
+        src: "/shots/shurq-workflows.webp",
+        w: 1100,
+        h: 548,
+        alt: "Shurq's Ad Manager workflows screen, with an approval queue tab, a note that every write step asks the user first, and starter templates such as Bid Guardrails, ACOS ladder and Pause bleeders.",
+        cap: "ad manager · workflows with an approval queue, and every write step asks first",
+      },
+      {
+        src: "/shots/shurq-ai-employees.webp",
+        w: 1100,
+        h: 708,
+        alt: "Shurq's AI Workforce screen. An AI employee card shows a trust score out of 100 and three autonomy modes, Observe, Co-pilot and Autopilot, with a note that it auto-acts only on Autopilot at trust 70 or more with three positive measured outcomes.",
+        cap: "AI employees · Observe, Co-pilot, Autopilot, and a trust score that has to be earned",
+      },
+    ],
+  },
+  {
+    id: "creative",
+    tag: "led",
+    title: "Creative Studio: listing images from data",
+    lede: "Generates a full Amazon listing set, nine images plus copy and strategy, from the product's listing, photos and design direction, grounded in the niche's real click-through and conversion rates and in Amazon's image guidelines.",
+    points: [
+      "Studies the product's current images and its competitors before generating anything.",
+      "Claims are checked before an image is rendered, so a listing image cannot promise what the product data does not support.",
+      "A+ Content runs Amazon's own validation before anything is sent, and lists every product whose live content would be replaced before submitting.",
+    ],
+    shots: [
+      {
+        src: "/shots/shurq-image-builder.webp",
+        w: 1100,
+        h: 751,
+        alt: "Shurq Creative Studio's Image Builder: enter an ASIN, choose a full listing set of nine images with copy and strategy or main images with A/B variants, with real CTR and CVR from the niche and claims checked before rendering.",
+        cap: "creative studio · image builder, about five to eight minutes for a full listing set",
+      },
+    ],
+  },
+];
+---
+
+<Base
+  title="Shurq · Sparli Aman"
+  description="Four years building the AI and data layer of Shurq, a UK Amazon-analytics SaaS: the data pipeline I own, and the AI chat, MCP server, Data API, AI Ad Manager and image generation I led."
+>
+  <section class="sh-head">
+    <p class="kick">case study · Jul 2022 to present</p>
+    <h1>Shurq: from idea stage to a paid product.</h1>
+    <p class="lede">
+      I joined Shurq, a UK Amazon-analytics SaaS, as its first AI and data engineer. I own the data
+      pipeline and led most of the data and AI features: Shurq AI, the MCP server, the Data API, the
+      AI Ad Manager and the image generation in Creative Studio. The team built the rest, and I will
+      say which is which.
+    </p>
+    <dl class="facts2">
+      {
+        facts.map(([v, k]) => (
+          <div>
+            <dt>{v}</dt>
+            <dd>{k}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <ShurqDiagram />
+
+  <nav class="toc" aria-label="On this page">
+    {areas.map((a) => <a href={`#${a.id}`}>{a.title.split(":")[0]}</a>)}
+  </nav>
+
+  {
+    areas.map((a) => (
+      <section class="area" id={a.id}>
+        <div class="area-text">
+          <p class="kick">{a.tag}</p>
+          <h2>{a.title}</h2>
+          <p class="lede2">{a.lede}</p>
+          <ul class="pts">
+            {a.points.map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+        </div>
+        {a.shots.length > 0 && (
+          <div class="area-media">
+            <Carousel label={a.title} slides={a.shots} />
+          </div>
+        )}
+      </section>
+    ))
+  }
+
+  <div class="cta">
+    <p>
+      <b>Hiring an AI engineer for agents, integrations or data pipelines?</b> Shurq is the product
+      I can talk about in the most depth. Send me a real problem you are dealing with and I will
+      tell you how I would approach it.
+    </p>
+    <p><a href="mailto:hello@sparli.dev">hello@sparli.dev</a></p>
+  </div>
+</Base>
+
+<style>
+  .sh-head {
+    padding: 40px 0 8px;
+  }
+  .kick {
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 10px;
+  }
+  .sh-head h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5.5vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .lede {
+    max-width: var(--measure);
+    font-size: 1.06rem;
+    color: var(--muted);
+    margin: 0 0 26px;
+  }
+  .facts2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 24px;
+    margin: 0;
+    padding: 18px 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 720px) {
+    .facts2 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .facts2 dt {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .facts2 dd {
+    margin: 6px 0 0;
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    color: var(--faint);
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 0 0 8px;
+    font-size: var(--t-meta);
+  }
+  .area {
+    padding: 34px 0 10px;
+    border-top: 1px solid var(--line);
+  }
+  .area h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 1.2rem + 0.9vw, 1.85rem);
+    line-height: 1.2;
+    margin: 0 0 12px;
+    max-width: 28ch;
+  }
+  .lede2 {
+    max-width: var(--measure);
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .pts {
+    max-width: var(--measure);
+    margin: 0 0 22px;
+    padding-left: 1.1em;
+    color: var(--muted);
+  }
+  .pts li {
+    margin: 0 0 8px;
+  }
+  /* Text beside the screen on wide displays, so a reader sees the claim and the
+   * evidence at once instead of scrolling past a stack of screenshots. */
+  @media (min-width: 1000px) {
+    .area {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: 40px;
+      align-items: start;
+    }
+    .area :global(.car) {
+      margin-top: 28px;
+    }
+  }
+</style>
