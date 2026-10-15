@@ -9,6 +9,9 @@ stack: ["Anthropic Messages API", "Claude Agent SDK", "Next.js", "Drizzle/Postgr
 order: 2
 ---
 
+import PendingActions from "../../components/diagrams/PendingActions.astro";
+
+
 Delivery work across several clients was bottlenecked on coordination rather than on engineering:
 triaging pull requests, moving tasks, writing the status update nobody wants to write on a Friday.
 
@@ -28,6 +31,8 @@ the model decide this particular case is obviously fine.
 So the send capability does not exist. The agent has no tool that emails a client and no tool that
 posts to ClickUp. What it has is a tool that writes a proposed action into a `pending_actions` row.
 A separate process, triggered by a human clicking approve, performs the action.
+
+<PendingActions />
 
 The distinction matters because of what it does to the worst case. With a prompt-based guard, the
 worst case is an agent that sends something wrong. Here, the worst case is a badly-worded row in a

@@ -9,6 +9,9 @@ stack: ["Twilio", "ElevenLabs Conversational AI", "Claude Haiku", "custom SMS to
 order: 1
 ---
 
+import Hangup from "../../components/diagrams/Hangup.astro";
+
+
 The client wanted prospects called, pitched, and sent a document during the call. Not after.
 During, while the person is still on the line, because a link that arrives an hour later gets
 ignored.
@@ -37,6 +40,8 @@ keep talking.
 
 So nothing was broken. Two correct behaviours composed into a wrong one, which is the usual shape of
 this kind of bug and the reason reading either component in isolation tells you nothing.
+
+<Hangup />
 
 ## The fix
 
