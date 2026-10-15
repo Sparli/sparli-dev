@@ -114,7 +114,16 @@ code { overflow-wrap: anywhere; }
  * legible when still, so switching it all off loses nothing. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  /* With the animation off, these would sit at their opacity: 0 starting frame
+   * and vanish. Show the end state of each loop instead, so the comment above
+   * stays true. */
+  .status .s3, .gatechip, .hangup, .tick, .rowpulse { opacity: 1 !important; }
 }
+/* The visible pause control in the hero (WCAG 2.2.2). Freezing in place rather
+ * than removing the animation keeps every element where it was. */
+html:has(#motion-pause:checked) *,
+html:has(#motion-pause:checked) *::before,
+html:has(#motion-pause:checked) *::after { animation-play-state: paused !important; }
 
 /* ---------- skip link: first tab stop, hidden until focused ---------- */
 .skip {
@@ -243,6 +252,14 @@ nav.site .mail:hover { border-color: var(--d-accent); color: var(--d-accent); }
 .flowhead .live::before { content: "●"; margin-right: 6px; animation: blink 2.4s ease-in-out infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 .flowviz { overflow-x: auto; }
+.flowviz:focus-visible { outline: 2px solid var(--d-accent); outline-offset: 4px; border-radius: 3px; }
+.pausectl {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--d-muted);
+}
+.pausectl input { width: 14px; height: 14px; margin: 0; accent-color: var(--d-accent); }
+.pausectl input:focus-visible { outline: 2px solid var(--d-accent); outline-offset: 2px; }
 .flowviz svg { display: block; width: 100%; height: auto; min-width: 560px; }
 /* wires: flowing dashes read as data moving */
 .wire {
