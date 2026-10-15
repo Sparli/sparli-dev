@@ -64,23 +64,24 @@ for (const entry of shipped) {
 
 <Base
   bare
-  title="Sparli Aman · production agent engineer"
-  description="Agents are easy to demo. Running one in someone else's production is a different job. Tool-using agents wired into CRMs, telephony, repos and regulated comms, behind approval gates."
+  title="Sparli Aman · senior AI engineer, agentic systems"
+  description="Agents are easy to demo. Running one in someone else's production is a different job. Tool-using agents wired into ad platforms, CRMs and telephony, behind approval gates, on data pipelines I own."
 >
   <div class="band">
     <header class="hero">
       <div class="frame">
         <div>
-          <p class="kicker"><b>Sparli Aman</b> · production agent engineer</p>
+          <p class="kicker"><b>Sparli Aman</b> · senior AI engineer · agentic systems &amp; data pipelines</p>
           <h1>Agents are easy to demo. Running one in <em>someone else&rsquo;s production</em> is a different job.</h1>
           <p class="lede">
-            I wire tool-using agents into CRMs, telephony, repos and regulated comms. I get
-            called when one is doing something wrong.
+            I build agents that take real actions in ad platforms, CRMs and phone systems, and the
+            data pipelines they run on. Four years of that inside one SaaS product, Shurq, from idea
+            stage to 200+ concurrent users.
           </p>
           <p class="facts">
             <span><b>7y</b> client-side delivery</span>
-            <span>live in <b>US · CA · UK</b></span>
-            <span><b>UTC+5</b> full EU overlap</span>
+            <span>clients in <b>US · CA · UK · Gulf</b></span>
+            <span><b>UTC+5</b> · remote or relocation</span>
           </p>
         </div>
         <div class="portrait">
@@ -174,12 +175,13 @@ for (const entry of shipped) {
             <dd class="tag2">client email</dd>
           </div>
           <div>
-            <dt>Side project</dt>
+            <dt>leadflow-agent</dt>
             <dd>
-              The terminal automated state is <code>prepared</code>. <code>submitted</code> is a
-              human attestation, and nothing reaches it without one.
+              Public repo. The model can only propose HubSpot records; the code writes them, and
+              only after a human approves. Every write goes to a ledger with one-command undo.
+              <a href="https://github.com/Sparli/leadflow-agent">github.com/Sparli/leadflow-agent</a>
             </dd>
-            <dd class="tag2">applications</dd>
+            <dd class="tag2">CRM writes</dd>
           </div>
         </dl>
       </div>
@@ -299,32 +301,46 @@ for (const entry of shipped) {
     </div>
   </section>
 
-  <section class="row" id="flight">
+  <section class="row" id="products">
     <div class="frame">
-      <p class="lab"><b>03</b>In flight</p>
+      <p class="lab"><b>03</b>Products</p>
       <div>
-        <h2>Designed, being built now.</h2>
+        <h2>Products I build and run, not just demo.</h2>
         <p class="sub">
-          Listed separately from shipped work on purpose. Neither has results yet, and a page
-          that blurs the two is not worth reading.
+          Two live products with real users, and one public repo you can read line by line.
+          Client work under NDA is in the case studies above.
         </p>
         <dl class="ledger">
           <div>
-            <dt>EduImmersion</dt>
+            <dt>Shurq</dt>
             <dd>
-              An orchestration layer for an education platform live with Québec school boards:
-              content, assessment and analytics agents around one shared learner record. I own the
-              architecture, wrote the specification the team builds from, and picked the team.
+              UK Amazon-analytics SaaS I joined at the idea stage, now a paid product with a 10+
+              person team, 200+ concurrent users and 21 marketplaces. I own the hourly data pipeline
+              that turns Amazon sales, fee and ad data into true per-product profit. I led and built
+              the MCP server (1,080 tools, 29 of them write actions, scoped API keys) and the AI Ad
+              Manager, where nothing touches a live ad account without a rule or a human.
+              <a href="https://shurq.com">shurq.com</a>
             </dd>
-            <dd class="tag2">architecture</dd>
+            <dd class="tag2">lead engineer</dd>
           </div>
           <div>
-            <dt>jobhunt-agent</dt>
+            <dt>EduImmersion</dt>
             <dd>
-              A job pipeline built to measure its own scorer: hand labels, chance-corrected
-              agreement, a measured human ceiling, baselines it has to beat. No results published yet.
-              Deliberately so, rather than placeholder numbers.
-              <a href="https://github.com/Sparli/jobhunt-agent">github.com/Sparli/jobhunt-agent</a>
+              Took a Québec EdTech client from raw requirements to two products, now in pilot: a
+              learner platform that generates lessons and quizzes by grade, language and pace (with
+              a paid tier on Stripe), and a role-based dashboard suite for schools, teachers and
+              parents. Both EN/FR, data hosted in Canada. I designed both and built most of the core
+              with a small team.
+            </dd>
+            <dd class="tag2">in pilot</dd>
+          </div>
+          <div>
+            <dt>leadflow-agent</dt>
+            <dd>
+              A tool-using agent that turns a raw sales enquiry into de-duplicated HubSpot records.
+              Pydantic-guarded tools, a human approval step before any write, a ledger with undo,
+              cost per run, strict mypy and gitleaks in CI.
+              <a href="https://github.com/Sparli/leadflow-agent">github.com/Sparli/leadflow-agent</a>
             </dd>
             <dd class="tag2">public repo</dd>
           </div>
@@ -379,7 +395,8 @@ for (const entry of shipped) {
         <p class="stackline">
           <b>Twilio</b> · <b>Asterisk/FreePBX</b> · <b>Deepgram</b> · <b>ElevenLabs</b> ·
           <b>Pipedrive</b> · <b>ClickUp</b> · <b>GitHub</b> · <b>Gmail</b> ·
-          <b>Amazon Ads API</b> · <b>Meta Ads</b> · <b>Google Places</b> · <b>Stripe</b>.
+          <b>HubSpot</b> · <b>Amazon Ads &amp; SP-API</b> · <b>BigQuery</b> · <b>MCP</b> ·
+          <b>Meta Ads</b> · <b>Google Places</b> · <b>Stripe</b>.
           Each wired up and debugged in production, not read about.
         </p>
       </div>
@@ -419,10 +436,10 @@ for (const entry of shipped) {
         same gates it advertises. <a href="https://github.com/Sparli/sparli-dev">Read the source</a>.
       </p>
       <div class="cta2">
-        <a class="btn" href="mailto:sparli@croncore.com">sparli@croncore.com</a>
+        <a class="btn" href="mailto:hello@sparli.dev">hello@sparli.dev</a>
         <span class="alt">
-          Hiring for a forward-deployed role? Send a real integration problem. Faster than a
-          screening call.
+          Hiring an AI engineer for agents, integrations or data pipelines? Remote, or relocation
+          with sponsorship. Send a real problem; it is faster than a screening call.
         </span>
       </div>
     </div>
