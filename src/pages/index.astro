@@ -409,8 +409,10 @@ for (const entry of shipped) {
             <dt>leadflow-agent</dt>
             <dd>
               A tool-using agent that turns a raw sales enquiry into de-duplicated HubSpot records.
-              Pydantic-guarded tools, a human approval step before any write, a ledger with undo,
-              cost per run, strict mypy and gitleaks in CI.
+              The model only proposes; a human approves before any write. A failure suite covers
+              HubSpot outages, lost responses and prompt injection, and a create is retried only when
+              it certainly did not happen. Ledger with undo, cost per run, strict mypy and gitleaks
+              in CI.
               <a href="https://github.com/Sparli/leadflow-agent">github.com/Sparli/leadflow-agent</a>
             </dd>
             <dd class="tag2">public repo</dd>
